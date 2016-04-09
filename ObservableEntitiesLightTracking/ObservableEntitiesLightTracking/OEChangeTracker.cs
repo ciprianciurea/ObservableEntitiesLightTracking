@@ -17,7 +17,7 @@ namespace ObservableEntitiesLightTracking
             _trackingEntityCollection = new Collection<OEEntityEntry>();
         }
 
-        internal event EventHandler<EntityEntryEventArgs> EntityChanged;
+        internal event EventHandler<EntityEntryEventArgs> EntityModified;
 
         void entity_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -34,7 +34,7 @@ namespace ObservableEntitiesLightTracking
                     if (!entityEntry.ModifiedProperties.Contains(e.PropertyName))
                         entityEntry.ModifiedProperties.Add(e.PropertyName);
 
-                    if (EntityChanged != null) EntityChanged(this, new EntityEntryEventArgs(entityEntry));
+                    if (EntityModified != null) EntityModified(this, new EntityEntryEventArgs(entityEntry));
                 }
             }
         }

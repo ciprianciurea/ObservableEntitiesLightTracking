@@ -153,5 +153,95 @@ namespace ObservableEntitiesLightTracking.Tests
             Assert.AreEqual(0, changes.Count());
         }
         #endregion  GetChanges tests
+
+        #region EntityChanged event tests
+        [TestMethod]
+        public void EntityChanged_should_not_be_triggered_on_attached()
+        {
+            int changesCount = 0;
+            var context = new OEContext();
+            context.EntityModified += (s, e) => changesCount++;
+
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Attach(product);
+            Assert.AreEqual(0, changesCount);
+        }
+
+        [TestMethod]
+        public void EntityChanged_should_not_be_triggered_on_added()
+        {
+            int changesCount = 0;
+            var context = new OEContext();
+            context.EntityModified += (s, e) => changesCount++;
+
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Add(product);
+            Assert.AreEqual(0, changesCount);
+        }
+
+        [TestMethod]
+        public void EntityChanged_should_not_be_triggered_on_attached_deleted()
+        {
+            int changesCount = 0;
+            var context = new OEContext();
+            context.EntityModified += (s, e) => changesCount++;
+
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Attach(product);
+            context.Set<Product>(null).Delete(product);
+            Assert.AreEqual(0, changesCount);
+        }
+
+        [TestMethod]
+        public void EntityChanged_should_not_be_triggered_on_added_deleted()
+        {
+            int changesCount = 0;
+            var context = new OEContext();
+            context.EntityModified += (s, e) => changesCount++;
+
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Add(product);
+            context.Set<Product>(null).Delete(product);
+            Assert.AreEqual(0, changesCount);
+        }
+
+        [TestMethod]
+        public void EntityChanged_should_be_triggered_on_modified()
+        {
+            int changesCount = 0;
+            var context = new OEContext();
+            context.EntityModified += (s, e) => changesCount++;
+
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Attach(product);
+            product.UnitPrice++;
+            Assert.AreEqual(1, changesCount);
+        }
+        #endregion EntityChanged event tests
     }
 }
