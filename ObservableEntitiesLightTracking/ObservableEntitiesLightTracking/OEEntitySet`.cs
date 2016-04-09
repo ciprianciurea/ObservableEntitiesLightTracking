@@ -87,19 +87,17 @@ namespace ObservableEntitiesLightTracking
                 bool entityValidationResult = true;
 
                 var validationContext = new ValidationContext(entity, _validationServiceProvider, new Dictionary<object, object>() { { typeof(KeyPropertyAttribute).Name, entities } });
+
+                ICollection<ValidationResult> simpleValidationResults = new Collection<ValidationResult>();
+                entityValidationResult = OEEntityValidator.TryValidateObject(entity, validationContext, simpleValidationResults, true);
+
+                foreach (var validationResult in simpleValidationResults)
+                    validationResults.Add(new ValidationResultWithSeverityLevel(validationResult.ErrorMessage, validationResult.MemberNames, null, entity));
+
                 // validates with severity level if the entity implements IValidatableObjectWithSeverityLevel
                 if (supportsSeverityLevels)
                 {
                     entityValidationResult = OEEntityValidator.TryValidateObjectWithSeverityLevel((IValidatableObjectWithSeverityLevel)entity, validationContext, validationResults, true, _parentContext.Configuration.ValidationSafeSeverityLevels);
-                }
-                else
-                {
-                    // validates without severity levels if the entity doesn't implement IValidatableObjectWithSeverityLevel
-                    ICollection<ValidationResult> simpleValidationResults = new Collection<ValidationResult>();
-                    entityValidationResult = OEEntityValidator.TryValidateObject(entity, validationContext, simpleValidationResults, true);
-
-                    foreach (var validationResult in simpleValidationResults)
-                        validationResults.Add(new ValidationResultWithSeverityLevel(validationResult.ErrorMessage, validationResult.MemberNames, null, entity));
                 }
 
                 // pass the validation results to the validated entity for display if implements IWriteDataErrorInfo
