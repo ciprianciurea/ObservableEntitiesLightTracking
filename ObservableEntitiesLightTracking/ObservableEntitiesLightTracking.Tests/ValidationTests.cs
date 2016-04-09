@@ -258,6 +258,44 @@ namespace ObservableEntitiesLightTracking.Tests
             Assert.AreEqual("UnitPrice", validationResults[2].MemberNames.ElementAt(0));
             Assert.AreEqual(ValidationSeverityLevel.Warning, validationResults[2].ErrorSeverity);
         }
+
+        [TestMethod]
+        public void Should_not_validate_and_return_errors_when_mixed_validation_is_not_met()
+        {
+            var context = new OEContext();
+            var productSet = context.Set<ProductWithMixedValidation>();
+            var product = new ProductWithMixedValidation()
+            {
+                Id = -1,
+                Name = null,
+                UnitPrice = -1
+            };
+            productSet.Add(product);
+
+            var validationResults = new List<ValidationResultWithSeverityLevel>();
+            var result = productSet.Validate(validationResults);
+            Assert.AreEqual(false, result);
+            Assert.AreEqual(2, validationResults.Count());
+            Assert.AreSame(product, validationResults[0].Entity);
+            Assert.AreEqual("Name", validationResults[0].MemberNames.ElementAt(0));
+            Assert.AreEqual(null, validationResults[0].ErrorSeverity);
+            // when attributes validation fails, IValidatableObject is not executed
+            Assert.AreSame(product, validationResults[1].Entity);
+            Assert.AreEqual("UnitPrice", validationResults[1].MemberNames.ElementAt(0));
+            Assert.AreEqual(ValidationSeverityLevel.Warning, validationResults[1].ErrorSeverity);
+
+            validationResults = new List<ValidationResultWithSeverityLevel>();
+            result = context.Validate(validationResults);
+            Assert.AreEqual(false, result);
+            Assert.AreEqual(2, validationResults.Count());
+            // when attributes validation fails, IValidtableObject is not executed
+            Assert.AreSame(product, validationResults[0].Entity);
+            Assert.AreEqual("Name", validationResults[0].MemberNames.ElementAt(0));
+            Assert.AreEqual(null, validationResults[0].ErrorSeverity);
+            Assert.AreSame(product, validationResults[1].Entity);
+            Assert.AreEqual("UnitPrice", validationResults[1].MemberNames.ElementAt(0));
+            Assert.AreEqual(ValidationSeverityLevel.Warning, validationResults[1].ErrorSeverity);
+        }
         #endregion Validation tests
     }
 }

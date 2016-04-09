@@ -19,7 +19,7 @@ namespace ObservableEntitiesLightTracking
         {
             bool result = true;
 
-            var results = instance.Validate(validationContext);
+            var results = instance.ValidateWithSeverityLevels(validationContext);
             if (results != null)
             {
                 foreach (var validationResult in results.Where(p => p != ValidationResultWithSeverityLevel.Success))

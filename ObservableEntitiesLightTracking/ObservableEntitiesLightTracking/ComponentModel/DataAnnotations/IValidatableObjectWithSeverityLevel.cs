@@ -13,6 +13,6 @@ namespace ObservableEntitiesLightTracking.ComponentModel.DataAnnotations
         /// </summary>
         /// <param name="validationContext">The validation context.</param>
         /// <returns>A collection that holds failed-validation information, along with the severity level.</returns>
-        IEnumerable<ValidationResultWithSeverityLevel> Validate(ValidationContext validationContext);
+        IEnumerable<ValidationResultWithSeverityLevel> ValidateWithSeverityLevels(ValidationContext validationContext);
     }
 }

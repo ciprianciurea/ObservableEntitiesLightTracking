@@ -1,13 +1,13 @@
-﻿using ObservableEntitiesLightTracking.ComponentModel.DataAnnotations;
+﻿using ObservableEntitiesLightTracking.ComponentModel;
+using ObservableEntitiesLightTracking.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using ObservableEntitiesLightTracking.ComponentModel;
 
 namespace ObservableEntitiesLightTracking.Tests.Model
 {
-    public class ProductWithCustomValidationSeveritySupport : ObservableObject, IValidatableObjectWithSeverityLevel
+    public class ProductWithMixedValidation : ObservableObject, IValidatableObject, IValidatableObjectWithSeverityLevel
     {
         int _id;
         public int Id
@@ -17,6 +17,7 @@ namespace ObservableEntitiesLightTracking.Tests.Model
         }
 
         string _name;
+        [Required]
         public string Name
         {
             get { return _name; }
@@ -30,19 +31,24 @@ namespace ObservableEntitiesLightTracking.Tests.Model
             set { SetProperty(ref _unitPrice, value); }
         }
 
-        public IEnumerable<ValidationResultWithSeverityLevel> ValidateWithSeverityLevels(ValidationContext validationContext)
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            var validationResults = new List<ValidationResultWithSeverityLevel>();
+            var validationResults = new List<ValidationResult>();
 
             if (Id <= 0)
             {
-                validationResults.Add(new ValidationResultWithSeverityLevel("Id must have a positive value", new string[] { "Id" }, ValidationSeverityLevel.Error, this));
+                validationResults.Add(new ValidationResult("Id must have a positive value", new string[] { "Id" }));
             }
 
-            if (string.IsNullOrWhiteSpace(Name))
-            {
-                validationResults.Add(new ValidationResultWithSeverityLevel("Name cannot be empty.", new string[] { "Name" }, ValidationSeverityLevel.Error, this));
-            }
+            if (validationResults.Count() > 0)
+                return validationResults.ToArray();
+            else
+                return new ValidationResult[] { ValidationResult.Success };
+        }
+
+        public IEnumerable<ValidationResultWithSeverityLevel> ValidateWithSeverityLevels(ValidationContext validationContext)
+        {
+            var validationResults = new List<ValidationResultWithSeverityLevel>();
 
             if (UnitPrice <= 0)
             {
