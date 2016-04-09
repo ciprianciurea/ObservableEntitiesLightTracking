@@ -22,7 +22,7 @@ namespace ObservableEntitiesLightTracking
         {
             #region Trigger entity set validation if ValidateOnPropertyChanged is set to true
 
-            var entitySet = _setsCollection[e.EntityEntry.EntitySet.GetType()];
+            var entitySet = _setsCollection[e.EntityEntry.Entity.GetType()];
 
             var validationResults = new Collection<ValidationResultWithSeverityLevel>();
             if (entitySet.ValidateOnPropertyChanged)
