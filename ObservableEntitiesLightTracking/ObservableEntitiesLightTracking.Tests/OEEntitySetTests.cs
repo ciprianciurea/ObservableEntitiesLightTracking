@@ -11,13 +11,13 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Attached_entity_should_be_tracked_as_unchanged()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
 
             var product = new Product();
             productSet.Attach(product);
 
-            var productEntry = changeTracker.Entries().First();
+            var productEntry = context.ChangeTracker.Entries().First();
             Assert.AreSame(product, productEntry.Entity);
             Assert.AreEqual(OEEntityState.Unchanged, productEntry.State);
         }
@@ -25,8 +25,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Modified_attached_entity_should_be_tracked_as_modified()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
 
             var product = new Product()
             {
@@ -37,15 +37,15 @@ namespace ObservableEntitiesLightTracking.Tests
             productSet.Attach(product);
             product.UnitPrice++;
 
-            var productEntry = changeTracker.Entries().First();
+            var productEntry = context.ChangeTracker.Entries().First();
             Assert.AreEqual(OEEntityState.Modified, productEntry.State);
         }
 
         [TestMethod]
         public void Modified_attached_entity_should_only_add_modified_property()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
 
             var product = new Product()
             {
@@ -56,7 +56,7 @@ namespace ObservableEntitiesLightTracking.Tests
             productSet.Attach(product);
             product.UnitPrice++;
 
-            var productEntry = changeTracker.Entries().First();
+            var productEntry = context.ChangeTracker.Entries().First();
             Assert.AreEqual(OEEntityState.Modified, productEntry.State);
 
             var modifiedProperties = productEntry.ModifiedProperties.ToArray();
@@ -67,8 +67,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Modified_attached_entity_should_add_multiple_modified_properties()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
 
             var product = new Product()
             {
@@ -80,7 +80,7 @@ namespace ObservableEntitiesLightTracking.Tests
             product.UnitPrice++;
             product.Name = "Modified Product";
 
-            var productEntry = changeTracker.Entries().First();
+            var productEntry = context.ChangeTracker.Entries().First();
             Assert.AreEqual(OEEntityState.Modified, productEntry.State);
 
             var modifiedProperties = productEntry.ModifiedProperties.ToArray();
@@ -94,13 +94,13 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Added_entity_should_be_tracked_as_added()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
 
             var product = new Product();
             productSet.Add(product);
 
-            var productEntry = changeTracker.Entries().First();
+            var productEntry = context.ChangeTracker.Entries().First();
             Assert.AreSame(product, productEntry.Entity);
             Assert.AreEqual(OEEntityState.Added, productEntry.State);
         }
@@ -108,8 +108,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Modified_added_entity_should_be_tracked_as_added()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
 
             var product = new Product()
             {
@@ -120,7 +120,7 @@ namespace ObservableEntitiesLightTracking.Tests
             productSet.Add(product);
             product.UnitPrice++;
 
-            var productEntry = changeTracker.Entries().First();
+            var productEntry = context.ChangeTracker.Entries().First();
             Assert.AreSame(product, productEntry.Entity);
             Assert.AreEqual(OEEntityState.Added, productEntry.State);
         }
@@ -130,22 +130,22 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Deleted_attached_entity_should_be_tracked_as_deleted()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
 
             var product = new Product();
             productSet.Attach(product);
             productSet.Delete(product);
 
-            var productEntry = changeTracker.Entries().First();
+            var productEntry = context.ChangeTracker.Entries().First();
             Assert.AreEqual(OEEntityState.Deleted, productEntry.State);
         }
 
         [TestMethod]
         public void Deleted_modified_attached_entity_should_be_tracked_as_deleted()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
 
             var product = new Product()
             {
@@ -157,21 +157,21 @@ namespace ObservableEntitiesLightTracking.Tests
             product.UnitPrice++;
             productSet.Delete(product);
 
-            var productEntry = changeTracker.Entries().First();
+            var productEntry = context.ChangeTracker.Entries().First();
             Assert.AreEqual(OEEntityState.Deleted, productEntry.State);
         }
 
         [TestMethod]
         public void Deleted_added_entity_should_be_no_longer_tracked()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
 
             var product = new Product();
             productSet.Add(product);
             productSet.Delete(product);
 
-            Assert.AreEqual(0, changeTracker.Entries().Count());
+            Assert.AreEqual(0, context.ChangeTracker.Entries().Count());
         }
         #endregion Delete Tests
 
@@ -179,34 +179,34 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Detached_attached_entities_should_be_no_longer_tracked()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
 
             var product = new Product();
             productSet.Attach(product);
             productSet.Detach(product);
 
-            Assert.AreEqual(0, changeTracker.Entries().Count());
+            Assert.AreEqual(0, context.ChangeTracker.Entries().Count());
         }
 
         [TestMethod]
         public void Detached_added_entities_should_be_no_longer_tracked()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
 
             var product = new Product();
             productSet.Add(product);
             productSet.Detach(product);
 
-            Assert.AreEqual(0, changeTracker.Entries().Count());
+            Assert.AreEqual(0, context.ChangeTracker.Entries().Count());
         }
 
         [TestMethod]
         public void Detached_modified_attached_entities_should_be_no_longer_tracked()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
 
             var product = new Product()
             {
@@ -218,7 +218,7 @@ namespace ObservableEntitiesLightTracking.Tests
             product.UnitPrice++;
             productSet.Detach(product);
 
-            Assert.AreEqual(0, changeTracker.Entries().Count());
+            Assert.AreEqual(0, context.ChangeTracker.Entries().Count());
         }
         #endregion Detach Tests
 
@@ -226,8 +226,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Attach_means_no_changes()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -241,8 +241,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Add_means_changes()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -256,8 +256,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Attach_detach_means_no_changes()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -273,8 +273,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Attach_delete_means_changes()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -290,8 +290,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Add_delete_means_no_changes()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -307,8 +307,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Attach_modify_means_changes_at_the_end()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -324,8 +324,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void Add_modify_means_changes_on_each_op()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -343,8 +343,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void GetChanges_should_not_return_attached_unchanged()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -359,8 +359,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void GetChanges_should_return_added()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -375,8 +375,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void GetChanges_should_return_attached_modified()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -393,8 +393,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void GetChanges_should_return_added_modified()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -411,8 +411,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void GetChanges_should_return_attached_deleted()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -429,8 +429,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void GetChanges_should_not_return_attached_modified_deleted()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -448,8 +448,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void GetChanges_should_not_return_added_deleted()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -466,8 +466,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void GetChanges_should_not_return_added_modified_deleted()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -487,8 +487,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void GetAll_should_return_attached()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -502,8 +502,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void GetAll_should_return_added()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -517,8 +517,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void GetAll_should_return_attached_deleted()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,
@@ -533,8 +533,8 @@ namespace ObservableEntitiesLightTracking.Tests
         [TestMethod]
         public void GetAll_should_not_return_added_deleted()
         {
-            var changeTracker = new OEChangeTracker();
-            var productSet = new OEEntitySet<Product>(changeTracker);
+            var context = new OEContext();
+            var productSet = context.Set<Product>();
             var product = new Product()
             {
                 Id = 1,

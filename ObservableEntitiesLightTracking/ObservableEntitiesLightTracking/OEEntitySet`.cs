@@ -11,26 +11,26 @@ namespace ObservableEntitiesLightTracking
 {
     public class OEEntitySet<TEntity> : OEEntitySet where TEntity : class, INotifyPropertyChanged
     {
-        OEChangeTracker _changeTracker;
+        OEContext _parentContext;
         IServiceProvider _validationServiceProvider;
 
-        internal OEEntitySet(OEChangeTracker changeTracker)
+        internal OEEntitySet(OEContext parentContext)
         {
+            _parentContext = parentContext;
             ValidateOnPropertyChanged = false;
-            _changeTracker = changeTracker;
         }
 
         public void Attach(TEntity entity)
         {
             if (entity != null)
-                _changeTracker.AttachEntry<TEntity>(entity, this);
+                _parentContext.ChangeTracker.AttachEntry<TEntity>(entity, this);
         }
 
         public void Detach(TEntity entity)
         {
             if (entity != null)
             {
-                var result = _changeTracker.DetachEntry<TEntity>(entity);
+                var result = _parentContext.ChangeTracker.DetachEntry<TEntity>(entity);
             }
         }
 
@@ -38,7 +38,7 @@ namespace ObservableEntitiesLightTracking
         {
             if (entity != null)
             {
-                var result = _changeTracker.AddEntry<TEntity>(entity, this);
+                var result = _parentContext.ChangeTracker.AddEntry<TEntity>(entity, this);
             }
         }
 
@@ -46,24 +46,24 @@ namespace ObservableEntitiesLightTracking
         {
             if (entity != null)
             {
-                var result = _changeTracker.DeleteEntry<TEntity>(entity);
+                var result = _parentContext.ChangeTracker.DeleteEntry<TEntity>(entity);
             }
         }
 
         public bool HasChanges()
         {
-            return _changeTracker.HasChanges<TEntity>();
+            return _parentContext.ChangeTracker.HasChanges<TEntity>();
         }
 
         public IEnumerable<TEntity> GetChanges()
         {
-            var result = _changeTracker.GetChanges<TEntity>();
+            var result = _parentContext.ChangeTracker.GetChanges<TEntity>();
             return result;
         }
 
         public IEnumerable<TEntity> GetAll()
         {
-            var result = _changeTracker.GetAll<TEntity>();
+            var result = _parentContext.ChangeTracker.GetAll<TEntity>();
             return result;
         }
 
@@ -79,7 +79,7 @@ namespace ObservableEntitiesLightTracking
             bool supportsSeverityLevels = typeof(IValidatableObjectWithSeverityLevel).IsAssignableFrom(typeof(TEntity));
             bool supportsWriteErrorInfo = typeof(IWriteDataErrorInfo).IsAssignableFrom(typeof(TEntity));
 
-            var entityEntries = _changeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified);
+            var entityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified);
             var entities = entityEntries.Select(p => p.Entity).Cast<TEntity>();
 
             foreach (var entity in entities)
@@ -90,7 +90,7 @@ namespace ObservableEntitiesLightTracking
                 // validates with severity level if the entity implements IValidatableObjectWithSeverityLevel
                 if (supportsSeverityLevels)
                 {
-                    entityValidationResult = OEEntityValidator.TryValidateObjectWithSeverityLevel((IValidatableObjectWithSeverityLevel)entity, validationContext, validationResults, true);
+                    entityValidationResult = OEEntityValidator.TryValidateObjectWithSeverityLevel((IValidatableObjectWithSeverityLevel)entity, validationContext, validationResults, true, _parentContext.Configuration.ValidationSafeSeverityLevels);
                 }
                 else
                 {

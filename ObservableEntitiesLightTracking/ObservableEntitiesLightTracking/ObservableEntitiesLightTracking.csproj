@@ -49,6 +49,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="OEChangeTracker.cs" />
     <Compile Include="OEContext.cs" />
+    <Compile Include="OEContextConfiguration.cs" />
     <Compile Include="OEEntityEntry.cs" />
     <Compile Include="OEEntitySet.cs" />
     <Compile Include="OEEntitySet`.cs" />

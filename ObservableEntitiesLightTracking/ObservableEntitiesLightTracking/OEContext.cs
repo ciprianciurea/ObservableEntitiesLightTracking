@@ -10,11 +10,16 @@ namespace ObservableEntitiesLightTracking
     {
         private Dictionary<Type, OEEntitySet> _setsCollection;
         private OEChangeTracker _changeTracker;
+        private OEContextConfiguration _configuration;
 
         public OEContext()
         {
             _setsCollection = new Dictionary<Type, OEEntitySet>();
             _changeTracker = new OEChangeTracker();
+            _configuration = new OEContextConfiguration()
+            {
+
+            };
             _changeTracker.EntityChanged += changeTracker_EntityChanged;
         }
 
@@ -37,6 +42,9 @@ namespace ObservableEntitiesLightTracking
         /// Event for when an entity in the collection has changed its tracking state.
         /// </summary>
         public event EventHandler EntityChanged;
+
+        internal OEChangeTracker ChangeTracker { get { return _changeTracker; } }
+        public OEContextConfiguration Configuration { get { return _configuration; } }
 
         public bool HasChanges()
         {
@@ -72,7 +80,7 @@ namespace ObservableEntitiesLightTracking
         public OEEntitySet<TEntity> Set<TEntity>() where TEntity : class, INotifyPropertyChanged
         {
             if (!_setsCollection.ContainsKey(typeof(TEntity)))
-                _setsCollection.Add(typeof(TEntity), new OEEntitySet<TEntity>(_changeTracker));
+                _setsCollection.Add(typeof(TEntity), new OEEntitySet<TEntity>(this));
 
             return _setsCollection[typeof(TEntity)] as OEEntitySet<TEntity>;
         }

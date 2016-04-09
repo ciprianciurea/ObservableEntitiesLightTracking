@@ -1,5 +1,6 @@
 ﻿using ObservableEntitiesLightTracking.ComponentModel;
 using ObservableEntitiesLightTracking.ComponentModel.DataAnnotations;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -11,25 +12,10 @@ namespace ObservableEntitiesLightTracking
         public static bool TryValidateObject(object instance, ValidationContext validationContext, ICollection<ValidationResult> validationResults, bool validateAllProperties)
         {
             var result = Validator.TryValidateObject(instance, validationContext, validationResults, validateAllProperties);
-
-            //if (validationContext != null)
-            //{
-            //    bool contextValidationResult = true;
-            //    foreach (var contextItem in validationContext)
-            //    {
-            //        if (contextItem != instance)
-            //        {
-            //            //TODO: primary keys validation
-            //            contextValidationResult = true;
-            //        }
-            //    }
-            //    result = result && contextValidationResult;
-            //}
-
             return result;
         }
 
-        public static bool TryValidateObjectWithSeverityLevel(IValidatableObjectWithSeverityLevel instance, ValidationContext validationContext, ICollection<ValidationResultWithSeverityLevel> validationResults, bool validateAllProperties)
+        public static bool TryValidateObjectWithSeverityLevel(IValidatableObjectWithSeverityLevel instance, ValidationContext validationContext, ICollection<ValidationResultWithSeverityLevel> validationResults, bool validateAllProperties, ICollection<object> failSafeSeverityLevels)
         {
             bool result = true;
 
@@ -38,7 +24,7 @@ namespace ObservableEntitiesLightTracking
             {
                 foreach (var validationResult in results.Where(p => p != ValidationResultWithSeverityLevel.Success))
                     validationResults.Add(validationResult);
-                result = !results.Any();
+                result = !results.Any(p => p.ErrorSeverity == null || failSafeSeverityLevels == null || !failSafeSeverityLevels.Contains(p.ErrorSeverity));
             }
 
             return result;
