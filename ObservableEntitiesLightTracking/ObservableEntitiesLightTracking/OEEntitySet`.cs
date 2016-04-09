@@ -51,6 +51,23 @@ namespace ObservableEntitiesLightTracking
             }
         }
 
+        public bool HasChanges()
+        {
+            return _changeTracker.HasChanges<TEntity>();
+        }
+
+        public IEnumerable<TEntity> GetChanges()
+        {
+            var result = _changeTracker.GetChanges<TEntity>();
+            return result;
+        }
+
+        public IEnumerable<TEntity> GetAll()
+        {
+            var result = _changeTracker.GetAll<TEntity>();
+            return result;
+        }
+
         public override bool Validate(ICollection<ValidationResultWithSeverityLevel> validationResults)
         {
             bool result = true;

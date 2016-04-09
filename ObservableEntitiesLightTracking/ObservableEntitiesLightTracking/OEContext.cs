@@ -49,12 +49,6 @@ namespace ObservableEntitiesLightTracking
             return result;
         }
 
-        public IEnumerable<TEntity> GetChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
-        {
-            var result = _changeTracker.GetChanges<TEntity>();
-            return result;
-        }
-
         public void CancelChanges()
         {
             _changeTracker.CancelChanges();

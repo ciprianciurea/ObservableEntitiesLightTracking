@@ -113,6 +113,12 @@ namespace ObservableEntitiesLightTracking
             return result;
         }
 
+        internal bool HasChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
+        {
+            var result = _trackingEntityCollection.Any(p => p.State != OEEntityState.Unchanged && p.Entity is TEntity);
+            return result;
+        }
+
         internal IEnumerable<object> GetChanges()
         {
             var result = _trackingEntityCollection.Where(p => p.State != OEEntityState.Unchanged).Select(p => p.Entity);
@@ -122,6 +128,12 @@ namespace ObservableEntitiesLightTracking
         internal IEnumerable<TEntity> GetChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
         {
             var result = _trackingEntityCollection.Where(p => p.State != OEEntityState.Unchanged && p.Entity is TEntity).Select(p => p.Entity as TEntity);
+            return result;
+        }
+
+        internal IEnumerable<TEntity> GetAll<TEntity>() where TEntity : class, INotifyPropertyChanged
+        {
+            var result = _trackingEntityCollection.Where(p => p.Entity is TEntity).Select(p => p.Entity as TEntity);
             return result;
         }
 
@@ -158,13 +170,18 @@ namespace ObservableEntitiesLightTracking
 
         internal void ApplyChanges()
         {
+            var itemsToDelete = new Collection<OEEntityEntry>();
             foreach (var item in _trackingEntityCollection.Where(p => p.State != OEEntityState.Unchanged))
             {
                 item.ApplyChanges();
 
+                if (item.State == OEEntityState.Deleted)
+                    itemsToDelete.Add(item);
                 if (item.State != OEEntityState.Unchanged)
                     item.State = OEEntityState.Unchanged;
             }
+            foreach (var item in itemsToDelete)
+                _trackingEntityCollection.Remove(item);
         }
 
         internal void ApplyChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
