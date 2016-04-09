@@ -482,5 +482,69 @@ namespace ObservableEntitiesLightTracking.Tests
             Assert.AreEqual(0, changes.Count());
         }
         #endregion  GetChanges tests
+
+        #region GetAll tests
+        [TestMethod]
+        public void GetAll_should_return_attached()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Attach(product);
+            Assert.AreSame(product, productSet.GetAll().FirstOrDefault());
+        }
+
+        [TestMethod]
+        public void GetAll_should_return_added()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Add(product);
+            Assert.AreSame(product, productSet.GetAll().FirstOrDefault());
+        }
+
+        [TestMethod]
+        public void GetAll_should_return_attached_deleted()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Attach(product);
+            productSet.Delete(product);
+            Assert.AreSame(product, productSet.GetAll().FirstOrDefault());
+        }
+
+        [TestMethod]
+        public void GetAll_should_not_return_added_deleted()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Add(product);
+            productSet.Delete(product);
+            Assert.AreEqual(0, productSet.GetAll().Count());
+        }
+        #endregion GetAll tests
     }
 }
