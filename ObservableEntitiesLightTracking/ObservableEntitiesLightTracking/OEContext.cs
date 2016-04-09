@@ -16,10 +16,7 @@ namespace ObservableEntitiesLightTracking
         {
             _setsCollection = new Dictionary<Type, OEEntitySet>();
             _changeTracker = new OEChangeTracker();
-            _configuration = new OEContextConfiguration()
-            {
-
-            };
+            _configuration = new OEContextConfiguration();
             _changeTracker.EntityChanged += changeTracker_EntityChanged;
         }
 

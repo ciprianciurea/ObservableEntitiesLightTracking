@@ -2,6 +2,7 @@
 using ObservableEntitiesLightTracking.ComponentModel;
 using ObservableEntitiesLightTracking.Tests.Model;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace ObservableEntitiesLightTracking.Tests
@@ -87,7 +88,7 @@ namespace ObservableEntitiesLightTracking.Tests
         }
 
         [TestMethod]
-        public void Should_validate_and_return_errors_when_attributes_conditions_are_not_met_no_severity_support()
+        public void Should_not_validate_and_return_errors_when_attributes_conditions_are_not_met_no_severity_support()
         {
             var context = new OEContext();
             var productSet = context.Set<ProductWithValidationAttributesNoSeverity>();
@@ -111,7 +112,7 @@ namespace ObservableEntitiesLightTracking.Tests
         }
 
         [TestMethod]
-        public void Should_validate_and_return_errors_when_custom_validation_is_not_met_no_severity_support()
+        public void Should_not_validate_and_return_errors_when_custom_validation_is_not_met_no_severity_support()
         {
             var context = new OEContext();
             var productSet = context.Set<ProductWithCustomValidationNoSeverity>();
@@ -135,9 +136,70 @@ namespace ObservableEntitiesLightTracking.Tests
         }
 
         [TestMethod]
-        public void Should_validate_and_return_errors_when_custom_validation_is_not_met_severity_support()
+        public void Should_not_validate_and_return_errors_when_custom_validation_is_not_met_severity_support()
         {
             var context = new OEContext();
+            var productSet = context.Set<ProductWithCustomValidationSeveritySupport>();
+            var product = new ProductWithCustomValidationSeveritySupport()
+            {
+                Id = -1,
+                Name = null,
+                UnitPrice = -1
+            };
+            productSet.Add(product);
+            var validationResults = new List<ValidationResultWithSeverityLevel>();
+            var result = productSet.Validate(validationResults);
+            Assert.AreEqual(false, result);
+            Assert.AreEqual(3, validationResults.Count());
+            Assert.AreSame(product, validationResults[0].Entity);
+            Assert.AreEqual("Id", validationResults[0].MemberNames.ElementAt(0));
+            Assert.AreEqual(ValidationSeverityLevel.Error, validationResults[0].ErrorSeverity);
+            Assert.AreSame(product, validationResults[1].Entity);
+            Assert.AreEqual("Name", validationResults[1].MemberNames.ElementAt(0));
+            Assert.AreEqual(ValidationSeverityLevel.Error, validationResults[1].ErrorSeverity);
+            Assert.AreSame(product, validationResults[2].Entity);
+            Assert.AreEqual("UnitPrice", validationResults[2].MemberNames.ElementAt(0));
+            Assert.AreEqual(ValidationSeverityLevel.Warning, validationResults[2].ErrorSeverity);
+        }
+
+        [TestMethod]
+        public void Should_validate_and_return_errors_when_all_severity_levels_are_excluded()
+        {
+            var context = new OEContext();
+
+            context.Configuration.ValidationSafeSeverityLevels = new Collection<object>() { ValidationSeverityLevel.Error, ValidationSeverityLevel.Warning };
+
+            var productSet = context.Set<ProductWithCustomValidationSeveritySupport>();
+            var product = new ProductWithCustomValidationSeveritySupport()
+            {
+                Id = -1,
+                Name = null,
+                UnitPrice = -1
+            };
+            productSet.Add(product);
+            var validationResults = new List<ValidationResultWithSeverityLevel>();
+            var result = productSet.Validate(validationResults);
+            Assert.AreEqual(true, result);
+            Assert.AreEqual(3, validationResults.Count());
+            Assert.AreSame(product, validationResults[0].Entity);
+            Assert.AreEqual("Id", validationResults[0].MemberNames.ElementAt(0));
+            Assert.AreEqual(ValidationSeverityLevel.Error, validationResults[0].ErrorSeverity);
+            Assert.AreSame(product, validationResults[1].Entity);
+            Assert.AreEqual("Name", validationResults[1].MemberNames.ElementAt(0));
+            Assert.AreEqual(ValidationSeverityLevel.Error, validationResults[1].ErrorSeverity);
+            Assert.AreSame(product, validationResults[2].Entity);
+            Assert.AreEqual("UnitPrice", validationResults[2].MemberNames.ElementAt(0));
+            Assert.AreEqual(ValidationSeverityLevel.Warning, validationResults[2].ErrorSeverity);
+        }
+
+        [TestMethod]
+        public void Should_not_validate_and_return_errors_when_some_severity_levels_are_not_excluded()
+        {
+            var context = new OEContext();
+
+            context.Configuration.ValidationSafeSeverityLevels = new Collection<object>() { ValidationSeverityLevel.Warning };
+            // ValidationSeverityLevel.Error should fail validation
+
             var productSet = context.Set<ProductWithCustomValidationSeveritySupport>();
             var product = new ProductWithCustomValidationSeveritySupport()
             {
