@@ -6,6 +6,7 @@ namespace ObservableEntitiesLightTracking.Tests.Model
     public class ProductWithValidationAttributes : ObservableObject
     {
         int _id;
+        [Range(0.0, Double.MaxValue)]
         public int Id
         {
             get { return _id; }

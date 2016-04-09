@@ -13,10 +13,11 @@ namespace ObservableEntitiesLightTracking.ComponentModel
         /// </summary>
         /// <param name="errorMessage">The error message.</param>
         /// <param name="errorSeverity">The error severity.</param>
-        public ValidationResultWithSeverityLevel(string errorMessage, object errorSeverity)
+        public ValidationResultWithSeverityLevel(string errorMessage, object errorSeverity, object entity)
             : base(errorMessage)
         {
             this.ErrorSeverity = errorSeverity;
+            this.Entity = entity;
         }
 
         /// <summary>
@@ -27,6 +28,7 @@ namespace ObservableEntitiesLightTracking.ComponentModel
             : base(new ValidationResult(validationResult.ErrorMessage, validationResult.MemberNames))
         {
             this.ErrorSeverity = validationResult.ErrorSeverity;
+            this.Entity = validationResult.Entity;
         }
 
         /// <summary>
@@ -36,15 +38,21 @@ namespace ObservableEntitiesLightTracking.ComponentModel
         /// <param name="errorMessage">The error message.</param>
         /// <param name="memberNames">The list of member names that have validation errors.</param>
         /// <param name="errorSeverity">The error severity.</param>
-        public ValidationResultWithSeverityLevel(string errorMessage, IEnumerable<string> memberNames, object errorSeverity)
+        public ValidationResultWithSeverityLevel(string errorMessage, IEnumerable<string> memberNames, object errorSeverity, object entity)
             : base(errorMessage, memberNames)
         {
             this.ErrorSeverity = errorSeverity;
+            this.Entity = entity;
         }
 
         /// <summary>
         /// Gets or sets the error severity Level
         /// </summary>
         public object ErrorSeverity { get; set; }
+
+        /// <summary>
+        /// Gets the validated entity.
+        /// </summary>
+        public object Entity { get; private set; }
     }
 }

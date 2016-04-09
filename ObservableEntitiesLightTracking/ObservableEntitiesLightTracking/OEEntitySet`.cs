@@ -99,7 +99,7 @@ namespace ObservableEntitiesLightTracking
                     entityValidationResult = OEEntityValidator.TryValidateObject(entity, validationContext, simpleValidationResults, true);
 
                     foreach (var validationResult in simpleValidationResults)
-                        validationResults.Add(new ValidationResultWithSeverityLevel(validationResult.ErrorMessage, validationResult.MemberNames, null));
+                        validationResults.Add(new ValidationResultWithSeverityLevel(validationResult.ErrorMessage, validationResult.MemberNames, null, entity));
                 }
 
                 // pass the validation results to the validated entity for display if implements IWriteDataErrorInfo
