@@ -54,7 +54,8 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Model\ObservableObject.cs" />
-    <Compile Include="Model\ProductWithValidationAttributes.cs" />
+    <Compile Include="Model\ProductWithCustomValidationNoSeverity.cs" />
+    <Compile Include="Model\ProductWithValidationAttributesNoSeverity.cs" />
     <Compile Include="Model\Product.cs" />
     <Compile Include="OEContextTests.cs" />
     <Compile Include="OEEntitySetTests.cs" />

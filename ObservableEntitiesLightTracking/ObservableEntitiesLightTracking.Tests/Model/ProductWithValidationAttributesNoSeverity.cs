@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ObservableEntitiesLightTracking.Tests.Model
 {
-    public class ProductWithValidationAttributes : ObservableObject
+    public class ProductWithValidationAttributesNoSeverity : ObservableObject
     {
         int _id;
         [Range(0.0, Double.MaxValue)]

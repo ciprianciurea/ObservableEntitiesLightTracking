@@ -25,8 +25,8 @@ namespace ObservableEntitiesLightTracking.Tests
         public void Should_validate_when_attributes_conditions_are_met()
         {
             var context = new OEContext();
-            var productSet = context.Set<ProductWithValidationAttributes>();
-            var product = new ProductWithValidationAttributes()
+            var productSet = context.Set<ProductWithValidationAttributesNoSeverity>();
+            var product = new ProductWithValidationAttributesNoSeverity()
             {
                 Id = 1,
                 Name = "Test product",
@@ -41,8 +41,8 @@ namespace ObservableEntitiesLightTracking.Tests
         public void Should_not_validate_when_attributes_conditions_are_not_met()
         {
             var context = new OEContext();
-            var productSet = context.Set<ProductWithValidationAttributes>();
-            var product = new ProductWithValidationAttributes()
+            var productSet = context.Set<ProductWithValidationAttributesNoSeverity>();
+            var product = new ProductWithValidationAttributesNoSeverity()
             {
                 Id = 1,
                 Name = null,
@@ -72,8 +72,8 @@ namespace ObservableEntitiesLightTracking.Tests
         public void Should_validate_and_no_errors_when_attributes_conditions_are_met()
         {
             var context = new OEContext();
-            var productSet = context.Set<ProductWithValidationAttributes>();
-            var product = new ProductWithValidationAttributes()
+            var productSet = context.Set<ProductWithValidationAttributesNoSeverity>();
+            var product = new ProductWithValidationAttributesNoSeverity()
             {
                 Id = 1,
                 Name = "Test product",
@@ -87,11 +87,35 @@ namespace ObservableEntitiesLightTracking.Tests
         }
 
         [TestMethod]
-        public void Should_validate_and_return_errors_when_attributes_conditions_are_not_met()
+        public void Should_validate_and_return_errors_when_attributes_conditions_are_not_met_no_severity_support()
         {
             var context = new OEContext();
-            var productSet = context.Set<ProductWithValidationAttributes>();
-            var product = new ProductWithValidationAttributes()
+            var productSet = context.Set<ProductWithValidationAttributesNoSeverity>();
+            var product = new ProductWithValidationAttributesNoSeverity()
+            {
+                Id = -1,
+                Name = null,
+                UnitPrice = -1
+            };
+            productSet.Add(product);
+            var validationResults = new List<ValidationResultWithSeverityLevel>();
+            var result = productSet.Validate(validationResults);
+            Assert.AreEqual(false, result);
+            Assert.AreEqual(3, validationResults.Count());
+            Assert.AreSame(product, validationResults[0].Entity);
+            Assert.AreEqual("Id", validationResults[0].MemberNames.ElementAt(0));
+            Assert.AreSame(product, validationResults[1].Entity);
+            Assert.AreEqual("Name", validationResults[1].MemberNames.ElementAt(0));
+            Assert.AreSame(product, validationResults[2].Entity);
+            Assert.AreEqual("UnitPrice", validationResults[2].MemberNames.ElementAt(0));
+        }
+
+        [TestMethod]
+        public void Should_validate_and_return_errors_when_custom_validation_is_not_met_no_severity_support()
+        {
+            var context = new OEContext();
+            var productSet = context.Set<ProductWithCustomValidationNoSeverity>();
+            var product = new ProductWithCustomValidationNoSeverity()
             {
                 Id = -1,
                 Name = null,
