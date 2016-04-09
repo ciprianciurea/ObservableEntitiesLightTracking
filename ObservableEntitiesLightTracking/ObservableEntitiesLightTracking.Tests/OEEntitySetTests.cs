@@ -221,5 +221,266 @@ namespace ObservableEntitiesLightTracking.Tests
             Assert.AreEqual(0, changeTracker.Entries().Count());
         }
         #endregion Detach Tests
+
+        #region HasChanges tests
+        [TestMethod]
+        public void Attach_means_no_changes()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Attach(product);
+            Assert.AreEqual(false, productSet.HasChanges());
+        }
+
+        [TestMethod]
+        public void Add_means_changes()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Add(product);
+            Assert.AreEqual(true, productSet.HasChanges());
+        }
+
+        [TestMethod]
+        public void Attach_detach_means_no_changes()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Attach(product);
+            Assert.AreEqual(false, productSet.HasChanges());
+            productSet.Detach(product);
+            Assert.AreEqual(false, productSet.HasChanges());
+        }
+
+        [TestMethod]
+        public void Attach_delete_means_changes()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Attach(product);
+            Assert.AreEqual(false, productSet.HasChanges());
+            productSet.Delete(product);
+            Assert.AreEqual(true, productSet.HasChanges());
+        }
+
+        [TestMethod]
+        public void Add_delete_means_no_changes()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Add(product);
+            Assert.AreEqual(true, productSet.HasChanges());
+            productSet.Delete(product);
+            Assert.AreEqual(false, productSet.HasChanges());
+        }
+
+        [TestMethod]
+        public void Attach_modify_means_changes_at_the_end()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Attach(product);
+            Assert.AreEqual(false, productSet.HasChanges());
+            product.UnitPrice++;
+            Assert.AreEqual(true, productSet.HasChanges());
+        }
+
+        [TestMethod]
+        public void Add_modify_means_changes_on_each_op()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Add(product);
+            Assert.AreEqual(true, productSet.HasChanges());
+            product.UnitPrice++;
+            Assert.AreEqual(true, productSet.HasChanges());
+        }
+        #endregion HasChanges tests
+
+        #region  GetChanges tests
+        [TestMethod]
+        public void GetChanges_should_not_return_attached_unchanged()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Attach(product);
+            var changes = productSet.GetChanges();
+            Assert.AreEqual(0, changes.Count());
+        }
+
+        [TestMethod]
+        public void GetChanges_should_return_added()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Add(product);
+            var changes = productSet.GetChanges();
+            Assert.AreSame(product, changes.FirstOrDefault());
+        }
+
+        [TestMethod]
+        public void GetChanges_should_return_attached_modified()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Attach(product);
+            product.UnitPrice++;
+
+            var changes = productSet.GetChanges();
+            Assert.AreSame(product, changes.FirstOrDefault());
+        }
+
+        [TestMethod]
+        public void GetChanges_should_return_added_modified()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Add(product);
+            product.UnitPrice++;
+
+            var changes = productSet.GetChanges();
+            Assert.AreSame(product, changes.FirstOrDefault());
+        }
+
+        [TestMethod]
+        public void GetChanges_should_return_attached_deleted()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Attach(product);
+            productSet.Delete(product);
+
+            var changes = productSet.GetChanges();
+            Assert.AreSame(product, changes.FirstOrDefault());
+        }
+
+        [TestMethod]
+        public void GetChanges_should_not_return_attached_modified_deleted()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Attach(product);
+            product.UnitPrice++;
+            productSet.Delete(product);
+
+            var changes = productSet.GetChanges();
+            Assert.AreSame(product, changes.FirstOrDefault());
+        }
+
+        [TestMethod]
+        public void GetChanges_should_not_return_added_deleted()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Add(product);
+            productSet.Delete(product);
+
+            var changes = productSet.GetChanges();
+            Assert.AreEqual(0, changes.Count());
+        }
+
+        [TestMethod]
+        public void GetChanges_should_not_return_added_modified_deleted()
+        {
+            var changeTracker = new OEChangeTracker();
+            var productSet = new OEEntitySet<Product>(changeTracker, null);
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            productSet.Add(product);
+            product.UnitPrice++;
+            productSet.Delete(product);
+
+            var changes = productSet.GetChanges();
+            Assert.AreEqual(0, changes.Count());
+        }
+        #endregion  GetChanges tests
     }
 }
