@@ -15,10 +15,10 @@ namespace ObservableEntitiesLightTracking
         {
             _setsCollection = new Dictionary<Type, OEEntitySet>();
             _changeTracker = new OEChangeTracker();
-            _changeTracker.EntityModified += changeTracker_EntityModified;
+            _changeTracker.EntityChanged += changeTracker_EntityChanged;
         }
 
-        void changeTracker_EntityModified(object sender, EntityEntryEventArgs e)
+        void changeTracker_EntityChanged(object sender, EntityEntryEventArgs e)
         {
             #region Trigger entity set validation if ValidateOnPropertyChanged is set to true
 
@@ -30,13 +30,13 @@ namespace ObservableEntitiesLightTracking
 
             #endregion Trigger entity set validation if ValidateOnPropertyChanged is set to true
 
-            if (EntityModified != null) EntityModified(this, e);
+            if (EntityChanged != null) EntityChanged(this, e);
         }
 
         /// <summary>
         /// Event for when an entity in the collection has changed its tracking state.
         /// </summary>
-        public event EventHandler EntityModified;
+        public event EventHandler EntityChanged;
 
         public bool HasChanges()
         {

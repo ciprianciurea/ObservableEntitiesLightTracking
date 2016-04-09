@@ -160,7 +160,7 @@ namespace ObservableEntitiesLightTracking.Tests
         {
             int changesCount = 0;
             var context = new OEContext();
-            context.EntityModified += (s, e) => changesCount++;
+            context.EntityChanged += (s, e) => changesCount++;
 
             var product = new Product()
             {
@@ -172,12 +172,11 @@ namespace ObservableEntitiesLightTracking.Tests
             Assert.AreEqual(0, changesCount);
         }
 
-        [TestMethod]
-        public void EntityChanged_should_not_be_triggered_on_added()
+        public void EntityChanged_should_not_be_triggered_on_detached()
         {
             int changesCount = 0;
             var context = new OEContext();
-            context.EntityModified += (s, e) => changesCount++;
+            context.EntityChanged += (s, e) => changesCount++;
 
             var product = new Product()
             {
@@ -185,16 +184,17 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Add(product);
+            context.Set<Product>(null).Attach(product);
+            context.Set<Product>(null).Detach(product);
             Assert.AreEqual(0, changesCount);
         }
 
         [TestMethod]
-        public void EntityChanged_should_not_be_triggered_on_attached_deleted()
+        public void EntityChanged_should_be_triggered_once_on_attached_deleted()
         {
             int changesCount = 0;
             var context = new OEContext();
-            context.EntityModified += (s, e) => changesCount++;
+            context.EntityChanged += (s, e) => changesCount++;
 
             var product = new Product()
             {
@@ -204,15 +204,15 @@ namespace ObservableEntitiesLightTracking.Tests
             };
             context.Set<Product>(null).Attach(product);
             context.Set<Product>(null).Delete(product);
-            Assert.AreEqual(0, changesCount);
+            Assert.AreEqual(1, changesCount);
         }
 
         [TestMethod]
-        public void EntityChanged_should_not_be_triggered_on_added_deleted()
+        public void EntityChanged_should_be_triggered_on_added()
         {
             int changesCount = 0;
             var context = new OEContext();
-            context.EntityModified += (s, e) => changesCount++;
+            context.EntityChanged += (s, e) => changesCount++;
 
             var product = new Product()
             {
@@ -221,8 +221,48 @@ namespace ObservableEntitiesLightTracking.Tests
                 UnitPrice = 100
             };
             context.Set<Product>(null).Add(product);
-            context.Set<Product>(null).Delete(product);
+            Assert.AreEqual(1, changesCount);
+        }
+
+        [TestMethod]
+        public void EntityChanged_should_be_triggered_on_modified_deleted_for_attached()
+        {
+            int changesCount = 0;
+            var context = new OEContext();
+            context.EntityChanged += (s, e) => changesCount++;
+
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Attach(product);
             Assert.AreEqual(0, changesCount);
+            product.UnitPrice++;
+            context.Set<Product>(null).Delete(product);
+            Assert.AreEqual(2, changesCount);
+        }
+
+        [TestMethod]
+        public void EntityChanged_should_be_triggered_on_added_modified_but_not_on_deleted()
+        {
+            int changesCount = 0;
+            var context = new OEContext();
+            context.EntityChanged += (s, e) => changesCount++;
+
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Add(product);
+            Assert.AreEqual(1, changesCount);
+            product.UnitPrice++;
+            Assert.AreEqual(2, changesCount);
+            context.Set<Product>(null).Delete(product);
+            Assert.AreEqual(2, changesCount);
         }
 
         [TestMethod]
@@ -230,7 +270,7 @@ namespace ObservableEntitiesLightTracking.Tests
         {
             int changesCount = 0;
             var context = new OEContext();
-            context.EntityModified += (s, e) => changesCount++;
+            context.EntityChanged += (s, e) => changesCount++;
 
             var product = new Product()
             {

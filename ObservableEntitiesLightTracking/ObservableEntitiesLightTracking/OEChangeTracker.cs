@@ -17,7 +17,7 @@ namespace ObservableEntitiesLightTracking
             _trackingEntityCollection = new Collection<OEEntityEntry>();
         }
 
-        internal event EventHandler<EntityEntryEventArgs> EntityModified;
+        internal event EventHandler<EntityEntryEventArgs> EntityChanged;
 
         void entity_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -33,10 +33,17 @@ namespace ObservableEntitiesLightTracking
                         entityEntry.ModifiedProperties = new List<string>();
                     if (!entityEntry.ModifiedProperties.Contains(e.PropertyName))
                         entityEntry.ModifiedProperties.Add(e.PropertyName);
-
-                    if (EntityModified != null) EntityModified(this, new EntityEntryEventArgs(entityEntry));
                 }
+
+                OnEntityChanged(entityEntry);
             }
+        }
+
+        void OnEntityChanged (OEEntityEntry entityEntry)
+        {
+            var entityChangedHandler = EntityChanged;
+            if (entityChangedHandler != null)
+                entityChangedHandler(this, new EntityEntryEventArgs(entityEntry));
         }
 
         internal OEEntityEntry AttachEntry<TEntity>(TEntity entity, OEEntitySet entitySet) where TEntity : class, INotifyPropertyChanged
@@ -75,6 +82,8 @@ namespace ObservableEntitiesLightTracking
                 entityEntry = new OEEntityEntry(entity, entitySet) { State = OEEntityState.Added };
                 _trackingEntityCollection.Add(entityEntry);
                 entity.PropertyChanged += entity_PropertyChanged;
+
+                OnEntityChanged(entityEntry);
             }
 
             return entityEntry;
@@ -89,7 +98,10 @@ namespace ObservableEntitiesLightTracking
                 if (entityEntry.State == OEEntityState.Added)
                     DetachEntry<TEntity>((TEntity)entityEntry.Entity);
                 else
+                {
                     entityEntry.State = OEEntityState.Deleted;
+                    OnEntityChanged(entityEntry);
+                }
             }
 
             return entityEntry;
