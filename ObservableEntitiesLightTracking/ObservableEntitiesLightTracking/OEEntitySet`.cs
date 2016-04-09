@@ -14,11 +14,10 @@ namespace ObservableEntitiesLightTracking
         OEChangeTracker _changeTracker;
         IServiceProvider _validationServiceProvider;
 
-        internal OEEntitySet(OEChangeTracker changeTracker, IServiceProvider validationServiceProvider)
+        internal OEEntitySet(OEChangeTracker changeTracker)
         {
             ValidateOnPropertyChanged = false;
             _changeTracker = changeTracker;
-            _validationServiceProvider = validationServiceProvider;
         }
 
         public void Attach(TEntity entity)
@@ -66,6 +65,11 @@ namespace ObservableEntitiesLightTracking
         {
             var result = _changeTracker.GetAll<TEntity>();
             return result;
+        }
+
+        public void SetValidationProvider(IServiceProvider validationServiceProvider)
+        {
+            _validationServiceProvider = validationServiceProvider;
         }
 
         public override bool Validate(ICollection<ValidationResultWithSeverityLevel> validationResults)

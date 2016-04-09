@@ -12,8 +12,8 @@ namespace ObservableEntitiesLightTracking.Tests
         public void Set_returns_the_same_entity_set_for_the_same_entity_type()
         {
             var context = new OEContext();
-            var productSet = context.Set<Product>(null);
-            var productSetAgain = context.Set<Product>(null);
+            var productSet = context.Set<Product>();
+            var productSetAgain = context.Set<Product>();
             Assert.AreSame(productSet, productSetAgain);
         }
         #endregion Set<TEntity> tests
@@ -29,7 +29,7 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
+            context.Set<Product>().Attach(product);
             Assert.AreEqual(false, context.HasChanges());
         }
 
@@ -43,7 +43,7 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Add(product);
+            context.Set<Product>().Add(product);
             Assert.AreEqual(true, context.HasChanges());
         }
 
@@ -57,9 +57,9 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
+            context.Set<Product>().Attach(product);
             Assert.AreEqual(false, context.HasChanges());
-            context.Set<Product>(null).Detach(product);
+            context.Set<Product>().Detach(product);
             Assert.AreEqual(false, context.HasChanges());
         }
 
@@ -73,9 +73,9 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
+            context.Set<Product>().Attach(product);
             Assert.AreEqual(false, context.HasChanges());
-            context.Set<Product>(null).Delete(product);
+            context.Set<Product>().Delete(product);
             Assert.AreEqual(true, context.HasChanges());
         }
 
@@ -89,9 +89,9 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Add(product);
+            context.Set<Product>().Add(product);
             Assert.AreEqual(true, context.HasChanges());
-            context.Set<Product>(null).Delete(product);
+            context.Set<Product>().Delete(product);
             Assert.AreEqual(false, context.HasChanges());
         }
 
@@ -105,7 +105,7 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
+            context.Set<Product>().Attach(product);
             Assert.AreEqual(false, context.HasChanges());
             product.UnitPrice++;
             Assert.AreEqual(true, context.HasChanges());
@@ -121,7 +121,7 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Add(product);
+            context.Set<Product>().Add(product);
             Assert.AreEqual(true, context.HasChanges());
             product.UnitPrice++;
             Assert.AreEqual(true, context.HasChanges());
@@ -139,7 +139,7 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
+            context.Set<Product>().Attach(product);
             var changes = context.GetChanges();
             Assert.AreEqual(0, changes.Count());
         }
@@ -154,7 +154,7 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Add(product);
+            context.Set<Product>().Add(product);
             var changes = context.GetChanges();
             Assert.AreSame(product, changes.FirstOrDefault());
         }
@@ -169,7 +169,7 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
+            context.Set<Product>().Attach(product);
             product.UnitPrice++;
 
             var changes = context.GetChanges();
@@ -186,7 +186,7 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Add(product);
+            context.Set<Product>().Add(product);
             product.UnitPrice++;
 
             var changes = context.GetChanges();
@@ -203,8 +203,8 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
-            context.Set<Product>(null).Delete(product);
+            context.Set<Product>().Attach(product);
+            context.Set<Product>().Delete(product);
 
             var changes = context.GetChanges();
             Assert.AreSame(product, changes.FirstOrDefault());
@@ -220,9 +220,9 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
+            context.Set<Product>().Attach(product);
             product.UnitPrice++;
-            context.Set<Product>(null).Delete(product);
+            context.Set<Product>().Delete(product);
 
             var changes = context.GetChanges();
             Assert.AreSame(product, changes.FirstOrDefault());
@@ -238,8 +238,8 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Add(product);
-            context.Set<Product>(null).Delete(product);
+            context.Set<Product>().Add(product);
+            context.Set<Product>().Delete(product);
 
             var changes = context.GetChanges();
             Assert.AreEqual(0, changes.Count());
@@ -255,9 +255,9 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Add(product);
+            context.Set<Product>().Add(product);
             product.UnitPrice++;
-            context.Set<Product>(null).Delete(product);
+            context.Set<Product>().Delete(product);
 
             var changes = context.GetChanges();
             Assert.AreEqual(0, changes.Count());
@@ -278,7 +278,7 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
+            context.Set<Product>().Attach(product);
             Assert.AreEqual(0, changesCount);
         }
 
@@ -294,8 +294,8 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
-            context.Set<Product>(null).Detach(product);
+            context.Set<Product>().Attach(product);
+            context.Set<Product>().Detach(product);
             Assert.AreEqual(0, changesCount);
         }
 
@@ -312,8 +312,8 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
-            context.Set<Product>(null).Delete(product);
+            context.Set<Product>().Attach(product);
+            context.Set<Product>().Delete(product);
             Assert.AreEqual(1, changesCount);
         }
 
@@ -330,7 +330,7 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Add(product);
+            context.Set<Product>().Add(product);
             Assert.AreEqual(1, changesCount);
         }
 
@@ -347,10 +347,10 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
+            context.Set<Product>().Attach(product);
             Assert.AreEqual(0, changesCount);
             product.UnitPrice++;
-            context.Set<Product>(null).Delete(product);
+            context.Set<Product>().Delete(product);
             Assert.AreEqual(2, changesCount);
         }
 
@@ -367,11 +367,11 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Add(product);
+            context.Set<Product>().Add(product);
             Assert.AreEqual(1, changesCount);
             product.UnitPrice++;
             Assert.AreEqual(2, changesCount);
-            context.Set<Product>(null).Delete(product);
+            context.Set<Product>().Delete(product);
             Assert.AreEqual(2, changesCount);
         }
 
@@ -388,7 +388,7 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
+            context.Set<Product>().Attach(product);
             product.UnitPrice++;
             Assert.AreEqual(1, changesCount);
         }
@@ -405,7 +405,7 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Add(product);
+            context.Set<Product>().Add(product);
             Assert.AreEqual(true, context.HasChanges());
             Assert.AreEqual(1, context.GetChanges().Count());
             context.CancelChanges();
@@ -422,7 +422,7 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
+            context.Set<Product>().Attach(product);
             product.UnitPrice++;
             Assert.AreEqual(true, context.HasChanges());
             Assert.AreEqual(1, context.GetChanges().Count());
@@ -440,8 +440,8 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
-            context.Set<Product>(null).Delete(product);
+            context.Set<Product>().Attach(product);
+            context.Set<Product>().Delete(product);
             Assert.AreEqual(true, context.HasChanges());
             Assert.AreEqual(1, context.GetChanges().Count());
             context.CancelChanges();
@@ -461,13 +461,13 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Add(product);
+            context.Set<Product>().Add(product);
             Assert.AreEqual(true, context.HasChanges());
             Assert.AreEqual(1, context.GetChanges().Count());
             context.ApplyChanges();
             Assert.AreEqual(false, context.HasChanges());
             Assert.AreEqual(0, context.GetChanges().Count());
-            Assert.AreEqual(1, context.Set<Product>(null).GetAll().Count());
+            Assert.AreEqual(1, context.Set<Product>().GetAll().Count());
         }
 
         [TestMethod]
@@ -480,14 +480,14 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
+            context.Set<Product>().Attach(product);
             product.UnitPrice++;
             Assert.AreEqual(true, context.HasChanges());
             Assert.AreEqual(1, context.GetChanges().Count());
             context.ApplyChanges();
             Assert.AreEqual(false, context.HasChanges());
             Assert.AreEqual(0, context.GetChanges().Count());
-            Assert.AreEqual(1, context.Set<Product>(null).GetAll().Count());
+            Assert.AreEqual(1, context.Set<Product>().GetAll().Count());
         }
 
         [TestMethod]
@@ -500,14 +500,14 @@ namespace ObservableEntitiesLightTracking.Tests
                 Name = "Test product",
                 UnitPrice = 100
             };
-            context.Set<Product>(null).Attach(product);
-            context.Set<Product>(null).Delete(product);
+            context.Set<Product>().Attach(product);
+            context.Set<Product>().Delete(product);
             Assert.AreEqual(true, context.HasChanges());
             Assert.AreEqual(1, context.GetChanges().Count());
             context.ApplyChanges();
             Assert.AreEqual(false, context.HasChanges());
             Assert.AreEqual(0, context.GetChanges().Count());
-            Assert.AreEqual(0, context.Set<Product>(null).GetAll().Count());
+            Assert.AreEqual(0, context.Set<Product>().GetAll().Count());
         }
         #endregion ApplyChanges tests
     }

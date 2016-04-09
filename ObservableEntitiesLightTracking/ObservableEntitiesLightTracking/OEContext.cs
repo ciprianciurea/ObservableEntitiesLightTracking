@@ -69,10 +69,10 @@ namespace ObservableEntitiesLightTracking
             _changeTracker.ApplyChanges();
         }
 
-        public OEEntitySet<TEntity> Set<TEntity>(IServiceProvider validationServiceProvider) where TEntity : class, INotifyPropertyChanged
+        public OEEntitySet<TEntity> Set<TEntity>() where TEntity : class, INotifyPropertyChanged
         {
             if (!_setsCollection.ContainsKey(typeof(TEntity)))
-                _setsCollection.Add(typeof(TEntity), new OEEntitySet<TEntity>(_changeTracker, validationServiceProvider));
+                _setsCollection.Add(typeof(TEntity), new OEEntitySet<TEntity>(_changeTracker));
 
             return _setsCollection[typeof(TEntity)] as OEEntitySet<TEntity>;
         }
