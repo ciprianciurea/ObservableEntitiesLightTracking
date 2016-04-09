@@ -96,7 +96,7 @@ namespace ObservableEntitiesLightTracking.Tests
         }
 
         [TestMethod]
-        public void Attach_modify_means_changes()
+        public void Attach_modify_means_changes_at_the_end()
         {
             var context = new OEContext();
             var product = new Product()
@@ -107,6 +107,22 @@ namespace ObservableEntitiesLightTracking.Tests
             };
             context.Set<Product>(null).Attach(product);
             Assert.AreEqual(false, context.HasChanges());
+            product.UnitPrice++;
+            Assert.AreEqual(true, context.HasChanges());
+        }
+
+        [TestMethod]
+        public void Add_modify_means_changes_on_each_op()
+        {
+            var context = new OEContext();
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Add(product);
+            Assert.AreEqual(true, context.HasChanges());
             product.UnitPrice++;
             Assert.AreEqual(true, context.HasChanges());
         }
@@ -377,5 +393,61 @@ namespace ObservableEntitiesLightTracking.Tests
             Assert.AreEqual(1, changesCount);
         }
         #endregion EntityChanged event tests
+
+        #region CancelChanges tests
+        [TestMethod]
+        public void CancelChanges_cancels_added_changes()
+        {
+            var context = new OEContext();
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Add(product);
+            Assert.AreEqual(true, context.HasChanges());
+            Assert.AreEqual(1, context.GetChanges().Count());
+            context.CancelChanges();
+            Assert.AreEqual(false, context.HasChanges());
+            Assert.AreEqual(0, context.GetChanges().Count());
+        }
+
+        public void CancelChanges_cancels_modified_changes()
+        {
+            var context = new OEContext();
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Attach(product);
+            product.UnitPrice++;
+            Assert.AreEqual(true, context.HasChanges());
+            Assert.AreEqual(1, context.GetChanges().Count());
+            context.CancelChanges();
+            Assert.AreEqual(false, context.HasChanges());
+            Assert.AreEqual(0, context.GetChanges().Count());
+        }
+
+        public void CancelChanges_cancels_attached_deleted_changes()
+        {
+            var context = new OEContext();
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Attach(product);
+            context.Set<Product>(null).Delete(product);
+            Assert.AreEqual(true, context.HasChanges());
+            Assert.AreEqual(1, context.GetChanges().Count());
+            context.CancelChanges();
+            Assert.AreEqual(false, context.HasChanges());
+            Assert.AreEqual(0, context.GetChanges().Count());
+        }
+        #endregion CancelChanges tests
     }
 }

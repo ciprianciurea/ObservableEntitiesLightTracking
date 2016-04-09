@@ -127,13 +127,22 @@ namespace ObservableEntitiesLightTracking
 
         internal void CancelChanges()
         {
+            var itemsToDelete = new Collection<OEEntityEntry>();
             foreach (var item in _trackingEntityCollection.Where(p => p.State != OEEntityState.Unchanged))
             {
                 item.CancelChanges();
 
                 if (item.State == OEEntityState.Modified || item.State == OEEntityState.Deleted)
                     item.State = OEEntityState.Unchanged;
+                else if (item.State == OEEntityState.Added)
+                {
+                    if (typeof(INotifyPropertyChanged).IsAssignableFrom(item.Entity.GetType()))
+                        ((INotifyPropertyChanged)item.Entity).PropertyChanged -= entity_PropertyChanged;
+                    itemsToDelete.Add(item);
+                }
             }
+            foreach (var item in itemsToDelete)
+                _trackingEntityCollection.Remove(item);
         }
 
         internal void CancelChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
