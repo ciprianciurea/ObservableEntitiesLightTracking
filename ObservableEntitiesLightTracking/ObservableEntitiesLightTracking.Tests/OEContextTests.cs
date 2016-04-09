@@ -18,6 +18,100 @@ namespace ObservableEntitiesLightTracking.Tests
         }
         #endregion Set<TEntity> tests
 
+        #region HasChanges tests
+        [TestMethod]
+        public void Attach_means_no_changes()
+        {
+            var context = new OEContext();
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Attach(product);
+            Assert.AreEqual(false, context.HasChanges());
+        }
+
+        [TestMethod]
+        public void Add_means_changes()
+        {
+            var context = new OEContext();
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Add(product);
+            Assert.AreEqual(true, context.HasChanges());
+        }
+
+        [TestMethod]
+        public void Attach_detach_means_no_changes()
+        {
+            var context = new OEContext();
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Attach(product);
+            Assert.AreEqual(false, context.HasChanges());
+            context.Set<Product>(null).Detach(product);
+            Assert.AreEqual(false, context.HasChanges());
+        }
+
+        [TestMethod]
+        public void Attach_delete_means_changes()
+        {
+            var context = new OEContext();
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Attach(product);
+            Assert.AreEqual(false, context.HasChanges());
+            context.Set<Product>(null).Delete(product);
+            Assert.AreEqual(true, context.HasChanges());
+        }
+
+        [TestMethod]
+        public void Add_delete_means_no_changes()
+        {
+            var context = new OEContext();
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Add(product);
+            Assert.AreEqual(true, context.HasChanges());
+            context.Set<Product>(null).Delete(product);
+            Assert.AreEqual(false, context.HasChanges());
+        }
+
+        [TestMethod]
+        public void Attach_modify_means_changes()
+        {
+            var context = new OEContext();
+            var product = new Product()
+            {
+                Id = 1,
+                Name = "Test product",
+                UnitPrice = 100
+            };
+            context.Set<Product>(null).Attach(product);
+            Assert.AreEqual(false, context.HasChanges());
+            product.UnitPrice++;
+            Assert.AreEqual(true, context.HasChanges());
+        }
+        #endregion HasChanges tests
+
         #region  GetChanges tests
         [TestMethod]
         public void GetChanges_should_not_return_attached_unchanged()

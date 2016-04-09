@@ -169,15 +169,6 @@ namespace ObservableEntitiesLightTracking
             }
         }
 
-        internal void Clear()
-        {
-            foreach (var item in _trackingEntityCollection)
-            {
-                ((INotifyPropertyChanged)item.Entity).PropertyChanged -= entity_PropertyChanged;
-            }
-            _trackingEntityCollection.Clear();
-        }
-
         internal IEnumerable<OEEntityEntry> Entries()
         {
             return _trackingEntityCollection.ToArray();

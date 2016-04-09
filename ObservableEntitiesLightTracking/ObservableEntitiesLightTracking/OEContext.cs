@@ -43,11 +43,6 @@ namespace ObservableEntitiesLightTracking
             return _changeTracker.HasChanges();
         }
 
-        public void Clear()
-        {
-            _changeTracker.Clear();
-        }
-
         public IEnumerable<object> GetChanges()
         {
             var result = _changeTracker.GetChanges();
