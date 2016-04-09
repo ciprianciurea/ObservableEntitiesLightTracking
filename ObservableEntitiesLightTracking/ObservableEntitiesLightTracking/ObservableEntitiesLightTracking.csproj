@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -40,9 +41,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComponentModel\DataAnnotations\IValidatableObjectWithSeverityLevel.cs" />
+    <Compile Include="ComponentModel\DataAnnotations\KeyPropertyAttribute.cs" />
+    <Compile Include="ComponentModel\IWriteDataErrorInfo.cs" />
+    <Compile Include="ComponentModel\ValidationResultWithSeverityLevel.cs" />
+    <Compile Include="EntityEntryEventArgs.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="OEChangeTracker.cs" />
+    <Compile Include="OEContext.cs" />
+    <Compile Include="OEEntityEntry.cs" />
+    <Compile Include="OEEntitySet.cs" />
+    <Compile Include="OEEntitySet`.cs" />
+    <Compile Include="OEEntityValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
