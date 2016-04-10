@@ -54,7 +54,7 @@ namespace ObservableEntitiesLightTracking.ComponentModel.DataAnnotations
 
                             if (duplicateProperties.Contains(validationContext.MemberName))
                             {
-                                return new ValidationResult(string.Format(ErrorMessageString, validationContext.DisplayName, primaryKeys.FirstOrDefault(p => p.Key == validationContext.MemberName)), new string[] { validationContext.MemberName });
+                                return new ValidationResult(string.Format(ErrorMessageString, validationContext.DisplayName, primaryKeys.Single(p => p.Key == validationContext.MemberName).Value), new string[] { validationContext.MemberName });
                             }
                         }
                     }

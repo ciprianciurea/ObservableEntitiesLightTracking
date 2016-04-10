@@ -53,8 +53,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="KeyPropertyTests.cs" />
     <Compile Include="Model\Enums.cs" />
     <Compile Include="Model\ObservableObject.cs" />
+    <Compile Include="Model\ProductWithSingleKeyProperty.cs" />
     <Compile Include="Model\ProductWithCustomValidationSeveritySupport.cs" />
     <Compile Include="Model\ProductWithCustomValidationNoSeverity.cs" />
     <Compile Include="Model\ProductWithMixedValidation.cs" />
