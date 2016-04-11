@@ -7,7 +7,7 @@ Observable Entities Light Tracking and Validation is a light framework that prov
 <li>Support for automatic notification on validation errors</li>
 <li>Support for validation with custom error severity levels</li>
 <li>Validation for duplicates on composite primary keys</li>
-<li>Complex custom validation through a pluggable `IServiceProvider`</li>
+<li>Complex custom validation through a pluggable <code>IServiceProvider</code></li>
 </ul>
 
 ### <a name="func1"></a>1. Entities change tracking
