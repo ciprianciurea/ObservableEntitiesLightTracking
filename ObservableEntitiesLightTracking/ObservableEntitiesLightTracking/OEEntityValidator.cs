@@ -29,5 +29,11 @@ namespace ObservableEntitiesLightTracking
 
             return result;
         }
+
+        public static bool TryValidateProperty(object instance, ValidationContext validationContext, ICollection<ValidationResult> validationResults)
+        {
+            var result = Validator.TryValidateProperty(instance, validationContext, validationResults);
+            return result;
+        }
     }
 }

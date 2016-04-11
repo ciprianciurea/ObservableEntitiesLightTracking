@@ -15,7 +15,7 @@ namespace ObservableEntitiesLightTracking.ComponentModel
         /// The <c>null</c> value is used to indicate success.  Consumers of <see cref="ValidationResultWithSeverityLevel"/>s 
         /// should compare the values to <see cref="ValidationResultWithSeverityLevel.Success"/> rather than checking for null. 
         /// </remarks> 
-        public static readonly ValidationResultWithSeverityLevel Success;
+        public static readonly new ValidationResultWithSeverityLevel Success;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidationResultWithSeverityLevel" /> class by using an error message and an error severity.

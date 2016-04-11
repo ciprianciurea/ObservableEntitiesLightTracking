@@ -18,6 +18,7 @@ namespace ObservableEntitiesLightTracking
         }
 
         internal event EventHandler<EntityEntryEventArgs> EntityChanged;
+        internal event EventHandler<EntityEntryPropertyChangedEventArgs> EntityPropertyChanged;
 
         void entity_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -35,15 +36,22 @@ namespace ObservableEntitiesLightTracking
                         entityEntry.ModifiedProperties.Add(e.PropertyName);
                 }
 
-                OnEntityChanged(entityEntry);
+                OnEntityPropertyChanged(entityEntry, e.PropertyName);
             }
         }
 
-        void OnEntityChanged (OEEntityEntry entityEntry)
+        void OnEntityChanged(OEEntityEntry entityEntry)
         {
             var entityChangedHandler = EntityChanged;
             if (entityChangedHandler != null)
                 entityChangedHandler(this, new EntityEntryEventArgs(entityEntry));
+        }
+
+        void OnEntityPropertyChanged(OEEntityEntry entityEntry, string propertyName)
+        {
+            var entityChangedHandler = EntityPropertyChanged;
+            if (entityChangedHandler != null)
+                entityChangedHandler(this, new EntityEntryPropertyChangedEventArgs(entityEntry, propertyName));
         }
 
         internal OEEntityEntry AttachEntry<TEntity>(TEntity entity, OEEntitySet entitySet) where TEntity : class, INotifyPropertyChanged
