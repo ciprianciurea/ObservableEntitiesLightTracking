@@ -18,9 +18,10 @@ namespace ObservableEntitiesLightTracking
             _changeTracker = new OEChangeTracker();
             _configuration = new OEContextConfiguration();
             _changeTracker.EntityChanged += changeTracker_EntityChanged;
+            _changeTracker.EntityPropertyChanged += changeTracker_EntityPropertyChanged;
         }
 
-        void changeTracker_EntityChanged(object sender, EntityEntryEventArgs e)
+        void changeTracker_EntityPropertyChanged(object sender, EntityEntryPropertyChangedEventArgs e)
         {
             #region Trigger entity set validation if ValidateOnPropertyChanged is set to true
 
@@ -28,10 +29,15 @@ namespace ObservableEntitiesLightTracking
 
             var validationResults = new Collection<ValidationResultWithSeverityLevel>();
             if (entitySet.ValidateOnPropertyChanged)
-                entitySet.Validate(validationResults);
+                entitySet.ValidateProperty(e.EntityEntry.Entity, e.PropertyName, validationResults);
 
             #endregion Trigger entity set validation if ValidateOnPropertyChanged is set to true
 
+            if (EntityChanged != null) EntityChanged(this, e);
+        }
+
+        void changeTracker_EntityChanged(object sender, EntityEntryEventArgs e)
+        {
             if (EntityChanged != null) EntityChanged(this, e);
         }
 

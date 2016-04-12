@@ -12,5 +12,7 @@ namespace ObservableEntitiesLightTracking.ComponentModel
         /// </summary>
         /// <param name="validationResults">The validation results.</param>
         void AddValidationErrors(ICollection<ValidationResultWithSeverityLevel> validationResults);
+
+        void AddPropertyValidationErrors(string propertyName, ICollection<ValidationResultWithSeverityLevel> validationResults);
     }
 }

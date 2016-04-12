@@ -38,5 +38,12 @@ namespace ObservableEntitiesLightTracking.Tests.Model
         {
             ValidationResults = validationResults;
         }
+
+        public void AddPropertyValidationErrors(string propertyName, ICollection<ValidationResultWithSeverityLevel> validationResults)
+        {
+            var itemsToRemove = ValidationResults.Where(p => p.MemberNames.Contains(propertyName));
+            foreach (var item in itemsToRemove)
+                ValidationResults.Remove(item);
+        }
     }
 }

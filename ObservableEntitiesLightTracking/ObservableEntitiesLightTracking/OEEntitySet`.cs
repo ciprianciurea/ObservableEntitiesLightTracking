@@ -108,5 +108,35 @@ namespace ObservableEntitiesLightTracking
             }
             return result;
         }
+
+        public override bool ValidateProperty(object instance, string propertyName, ICollection<ValidationResultWithSeverityLevel> validationResults)
+        {
+            bool result = true;
+
+            bool supportsSeverityLevels = typeof(IValidatableObjectWithSeverityLevel).IsAssignableFrom(typeof(TEntity));
+            bool supportsWriteErrorInfo = typeof(IWriteDataErrorInfo).IsAssignableFrom(typeof(TEntity));
+
+            var entityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified);
+            var entities = entityEntries.Select(p => p.Entity).Cast<TEntity>();
+
+            var validationContext = new ValidationContext(instance, _validationServiceProvider, new Dictionary<object, object>() { { typeof(KeyPropertyAttribute).Name, entities } }) { MemberName = propertyName };
+            ICollection<ValidationResult> simpleValidationResults = new Collection<ValidationResult>();
+
+            var property = instance.GetType().GetProperty(propertyName);
+            if (property != null)
+            {
+                var propertyValue = property.GetValue(instance);
+                result = OEEntityValidator.TryValidateProperty(propertyValue, validationContext, simpleValidationResults);
+            }
+
+            foreach (var validationResult in simpleValidationResults)
+                validationResults.Add(new ValidationResultWithSeverityLevel(validationResult.ErrorMessage, validationResult.MemberNames, null, instance));
+
+            // pass the validation results to the validated entity for display if implements IWriteDataErrorInfo
+            if (supportsWriteErrorInfo)
+                ((IWriteDataErrorInfo)instance).AddPropertyValidationErrors(propertyName, validationResults);
+
+            return result;
+        }
     }
 }
