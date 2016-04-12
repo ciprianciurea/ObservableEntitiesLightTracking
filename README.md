@@ -21,9 +21,9 @@ Entities implementing `INotifyPropertyChanged` could be leveraged to perform aut
 In order to use this functionality, the entity being validated should implement the `IWriteDataErrorInfo` interface, defined in `ObservableEntitiesLightTracking.ComponentModel`. The entity can be notified this way of any validation errors and process them (e.g. for display purposes).
 
 ### <a name="func4"></a>4. Validation with custom error severity levels
-Custom client validation with customizable severity levels is supported. Entities must implement interface `IValidatableObjectWithSeverityLevel` for this to happen. It could be possible that sometimes it would be required that only some of the error severity levels would make the validation fail (the others still being necessary for display purposes). This could be achieved by one line of code:<br/>
-`context.Configuration.ValidationSafeSeverityLevels = new Collection<object>() { ValidationSeverityLevel.CriticalError, ValidationSeverityLevel.Error };`<br/>
-You could have other severity levels like `ValidationSeverityLevel.Warning` which would still be picked up by the validation, but would not fail it.
+Custom client validation with customizable severity levels is supported. Entities must implement interface `IValidatableObjectWithSeverityLevel` for this to happen. It could be possible that sometimes it would be required that some of the error severity levels would not make the validation fail (while still being necessary for display purposes). This could be achieved by one line of code:<br/>
+`context.Configuration.ValidationSafeSeverityLevels = new Collection<object>() { ValidationSeverityLevel.Warning};`<br/>
+You could have other severity levels like `ValidationSeverityLevel.CriticalError, ValidationSeverityLevel.Error` which would make the validation fail because they are not added to the collection above.
 
 ### <a name="func5"></a>5. Validation for duplicates on composite primary keys
 The `KeyProperty` validation attribute could be used to mark one or more properties of the entities as primary key of the entity context. Having duplicates would the be picked by the validation and if the entity is implementing the `IWriteDataErrorInfo` interface, it would then be notified of this error.
