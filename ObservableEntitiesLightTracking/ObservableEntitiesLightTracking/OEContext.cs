@@ -54,7 +54,7 @@ namespace ObservableEntitiesLightTracking
             return _changeTracker.HasChanges();
         }
 
-        public IEnumerable<object> GetChanges()
+        public IEnumerable<OEEntityEntry> GetChanges()
         {
             var result = _changeTracker.GetChanges();
             return result;

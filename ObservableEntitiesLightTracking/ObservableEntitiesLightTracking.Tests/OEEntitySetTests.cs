@@ -369,7 +369,7 @@ namespace ObservableEntitiesLightTracking.Tests
             };
             productSet.Add(product);
             var changes = productSet.GetChanges();
-            Assert.AreSame(product, changes.FirstOrDefault());
+            Assert.AreSame(product, changes.FirstOrDefault().Entity);
         }
 
         [TestMethod]
@@ -387,7 +387,8 @@ namespace ObservableEntitiesLightTracking.Tests
             product.UnitPrice++;
 
             var changes = productSet.GetChanges();
-            Assert.AreSame(product, changes.FirstOrDefault());
+            Assert.AreSame(product, changes.FirstOrDefault().Entity);
+            Assert.AreEqual("UnitPrice", changes.First().ModifiedProperties.FirstOrDefault());
         }
 
         [TestMethod]
@@ -405,7 +406,7 @@ namespace ObservableEntitiesLightTracking.Tests
             product.UnitPrice++;
 
             var changes = productSet.GetChanges();
-            Assert.AreSame(product, changes.FirstOrDefault());
+            Assert.AreSame(product, changes.FirstOrDefault().Entity);
         }
 
         [TestMethod]
@@ -423,11 +424,11 @@ namespace ObservableEntitiesLightTracking.Tests
             productSet.Delete(product);
 
             var changes = productSet.GetChanges();
-            Assert.AreSame(product, changes.FirstOrDefault());
+            Assert.AreSame(product, changes.FirstOrDefault().Entity);
         }
 
         [TestMethod]
-        public void GetChanges_should_not_return_attached_modified_deleted()
+        public void GetChanges_should_return_attached_modified_deleted()
         {
             var context = new OEContext();
             var productSet = context.Set<Product>();
@@ -442,7 +443,7 @@ namespace ObservableEntitiesLightTracking.Tests
             productSet.Delete(product);
 
             var changes = productSet.GetChanges();
-            Assert.AreSame(product, changes.FirstOrDefault());
+            Assert.AreSame(product, changes.FirstOrDefault().Entity);
         }
 
         [TestMethod]

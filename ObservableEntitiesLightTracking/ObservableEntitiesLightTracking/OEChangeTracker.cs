@@ -127,15 +127,15 @@ namespace ObservableEntitiesLightTracking
             return result;
         }
 
-        internal IEnumerable<object> GetChanges()
+        internal IEnumerable<OEEntityEntry> GetChanges()
         {
-            var result = _trackingEntityCollection.Where(p => p.State != OEEntityState.Unchanged).Select(p => p.Entity);
+            var result = _trackingEntityCollection.Where(p => p.State != OEEntityState.Unchanged).ToArray();
             return result;
         }
 
-        internal IEnumerable<TEntity> GetChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
+        internal IEnumerable<OEEntityEntry> GetChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
         {
-            var result = _trackingEntityCollection.Where(p => p.State != OEEntityState.Unchanged && p.Entity is TEntity).Select(p => p.Entity as TEntity);
+            var result = _trackingEntityCollection.Where(p => p.State != OEEntityState.Unchanged && p.Entity is TEntity).ToArray();
             return result;
         }
 

@@ -156,7 +156,7 @@ namespace ObservableEntitiesLightTracking.Tests
             };
             context.Set<Product>().Add(product);
             var changes = context.GetChanges();
-            Assert.AreSame(product, changes.FirstOrDefault());
+            Assert.AreSame(product, changes.FirstOrDefault().Entity);
         }
 
         [TestMethod]
@@ -173,7 +173,8 @@ namespace ObservableEntitiesLightTracking.Tests
             product.UnitPrice++;
 
             var changes = context.GetChanges();
-            Assert.AreSame(product, changes.FirstOrDefault());
+            Assert.AreSame(product, changes.FirstOrDefault().Entity);
+            Assert.AreEqual("UnitPrice", changes.First().ModifiedProperties.FirstOrDefault());
         }
 
         [TestMethod]
@@ -190,7 +191,7 @@ namespace ObservableEntitiesLightTracking.Tests
             product.UnitPrice++;
 
             var changes = context.GetChanges();
-            Assert.AreSame(product, changes.FirstOrDefault());
+            Assert.AreSame(product, changes.FirstOrDefault().Entity);
         }
 
         [TestMethod]
@@ -207,7 +208,7 @@ namespace ObservableEntitiesLightTracking.Tests
             context.Set<Product>().Delete(product);
 
             var changes = context.GetChanges();
-            Assert.AreSame(product, changes.FirstOrDefault());
+            Assert.AreSame(product, changes.FirstOrDefault().Entity);
         }
 
         [TestMethod]
@@ -225,7 +226,7 @@ namespace ObservableEntitiesLightTracking.Tests
             context.Set<Product>().Delete(product);
 
             var changes = context.GetChanges();
-            Assert.AreSame(product, changes.FirstOrDefault());
+            Assert.AreSame(product, changes.FirstOrDefault().Entity);
         }
 
         [TestMethod]
