@@ -141,7 +141,7 @@ namespace ObservableEntitiesLightTracking
 
         internal IEnumerable<TEntity> GetAll<TEntity>() where TEntity : class, INotifyPropertyChanged
         {
-            var result = _trackingEntityCollection.Where(p => p.Entity is TEntity).Select(p => p.Entity as TEntity);
+            var result = _trackingEntityCollection.Where(p => p.Entity is TEntity).Select(p => p.Entity as TEntity).ToArray();
             return result;
         }
 
