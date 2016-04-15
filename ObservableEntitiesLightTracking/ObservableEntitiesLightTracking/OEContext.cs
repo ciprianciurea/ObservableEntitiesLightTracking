@@ -67,7 +67,7 @@ namespace ObservableEntitiesLightTracking
 
         public void CancelChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
         {
-            _changeTracker.CancelChanges();
+            _changeTracker.CancelChanges<TEntity>();
         }
 
         public void ApplyChanges()
