@@ -40,9 +40,9 @@ namespace ObservableEntitiesLightTracking
 
         private void InitializeOriginalValues()
         {
-            foreach (var property in this.GetType().GetProperties().Where(p => p.GetSetMethod() != null))
+            foreach (var property in _entity.GetType().GetProperties().Where(p => p.GetSetMethod() != null))
             {
-                _originalValues.Add(property.Name, property.GetValue(this));
+                _originalValues.Add(property.Name, property.GetValue(_entity));
             }
         }
 
@@ -50,7 +50,7 @@ namespace ObservableEntitiesLightTracking
         {
             foreach (var property in _entity.GetType().GetProperties().Where(p => p.GetSetMethod() != null))
             {
-                if (_originalValues.ContainsKey(property.Name) && property.GetValue(this) != _originalValues[property.Name])
+                if (_originalValues.ContainsKey(property.Name) && property.GetValue(_entity) != _originalValues[property.Name])
                 {
                     property.SetValue(_entity, _originalValues[property.Name]);
                 }
