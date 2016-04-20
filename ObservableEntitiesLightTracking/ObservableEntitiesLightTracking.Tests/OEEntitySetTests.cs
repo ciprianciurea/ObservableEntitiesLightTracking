@@ -61,7 +61,10 @@ namespace ObservableEntitiesLightTracking.Tests
 
             var modifiedProperties = productEntry.ModifiedProperties.ToArray();
             Assert.AreEqual(1, modifiedProperties.Count());
-            Assert.AreEqual("UnitPrice", modifiedProperties[0]);
+
+            var modifiedProperty = modifiedProperties[0];
+            Assert.AreEqual("UnitPrice", modifiedProperty.Name);
+            Assert.AreEqual(100M, modifiedProperty.OriginalValue);
         }
 
         [TestMethod]
@@ -85,8 +88,14 @@ namespace ObservableEntitiesLightTracking.Tests
 
             var modifiedProperties = productEntry.ModifiedProperties.ToArray();
             Assert.AreEqual(2, modifiedProperties.Count());
-            Assert.AreEqual("UnitPrice", modifiedProperties[0]);
-            Assert.AreEqual("Name", modifiedProperties[1]);
+
+            var modifiedProperty = modifiedProperties[0];
+            Assert.AreEqual("UnitPrice", modifiedProperty.Name);
+            Assert.AreEqual(100M, modifiedProperty.OriginalValue);
+
+            modifiedProperty = modifiedProperties[1];
+            Assert.AreEqual("Name", modifiedProperty.Name);
+            Assert.AreEqual("Test product", modifiedProperty.OriginalValue);
         }
         #endregion Attach tests
 
@@ -388,7 +397,9 @@ namespace ObservableEntitiesLightTracking.Tests
 
             var changes = productSet.GetChanges();
             Assert.AreSame(product, changes.FirstOrDefault().Entity);
-            Assert.AreEqual("UnitPrice", changes.First().ModifiedProperties.FirstOrDefault());
+            var modifiedProperty = changes.First().ModifiedProperties.First();
+            Assert.AreEqual("UnitPrice", modifiedProperty.Name);
+            Assert.AreEqual(100M, modifiedProperty.OriginalValue);
         }
 
         [TestMethod]

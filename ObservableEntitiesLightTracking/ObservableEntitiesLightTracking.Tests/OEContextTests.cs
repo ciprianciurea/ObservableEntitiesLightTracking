@@ -174,7 +174,9 @@ namespace ObservableEntitiesLightTracking.Tests
 
             var changes = context.GetChanges();
             Assert.AreSame(product, changes.FirstOrDefault().Entity);
-            Assert.AreEqual("UnitPrice", changes.First().ModifiedProperties.FirstOrDefault());
+            var modifiedProperty = changes.First().ModifiedProperties.First();
+            Assert.AreEqual("UnitPrice", modifiedProperty.Name);
+            Assert.AreEqual(100M, modifiedProperty.OriginalValue);
         }
 
         [TestMethod]

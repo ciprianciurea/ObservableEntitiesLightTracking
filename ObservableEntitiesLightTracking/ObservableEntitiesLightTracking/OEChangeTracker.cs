@@ -30,10 +30,7 @@ namespace ObservableEntitiesLightTracking
 
                 if (entityEntry.State == OEEntityState.Modified)
                 {
-                    if (entityEntry.ModifiedProperties == null)
-                        entityEntry.ModifiedProperties = new List<string>();
-                    if (!entityEntry.ModifiedProperties.Contains(e.PropertyName))
-                        entityEntry.ModifiedProperties.Add(e.PropertyName);
+                    entityEntry.AddModifiedProperty(e.PropertyName);
                 }
 
                 OnEntityPropertyChanged(entityEntry, e.PropertyName);

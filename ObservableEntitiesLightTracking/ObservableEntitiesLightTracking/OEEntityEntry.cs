@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace ObservableEntitiesLightTracking
@@ -8,6 +9,7 @@ namespace ObservableEntitiesLightTracking
         private readonly object _entity;
         private readonly OEEntitySet _entitySet;
         Dictionary<string, object> _originalValues;
+        IList<OEModifiedPropertyInfo> _modifiedProperties;
 
         internal OEEntityEntry(object entity, OEEntitySet entitySet)
         {
@@ -16,6 +18,8 @@ namespace ObservableEntitiesLightTracking
             _originalValues = new Dictionary<string, object>();
 
             InitializeOriginalValues();
+            _modifiedProperties = new List<OEModifiedPropertyInfo>();
+            ModifiedProperties = new ReadOnlyCollection<OEModifiedPropertyInfo>(_modifiedProperties);
         }
 
         public object Entity
@@ -36,7 +40,7 @@ namespace ObservableEntitiesLightTracking
         /// <summary>
         /// Properties on an entity that have been modified.
         /// </summary>
-        public ICollection<string> ModifiedProperties { get; set; }
+        public IReadOnlyCollection<OEModifiedPropertyInfo> ModifiedProperties { get; private set; }
 
         private void InitializeOriginalValues()
         {
@@ -44,6 +48,13 @@ namespace ObservableEntitiesLightTracking
             {
                 _originalValues.Add(property.Name, property.GetValue(_entity));
             }
+        }
+
+        internal void AddModifiedProperty(string propertyName)
+        {
+            var modifiedProperty = _modifiedProperties.FirstOrDefault(p => p.Name == propertyName);
+            if (modifiedProperty == null)
+                _modifiedProperties.Add(new OEModifiedPropertyInfo(propertyName, _originalValues.FirstOrDefault(p => p.Key == propertyName).Value));
         }
 
         internal void CancelChanges()
@@ -55,6 +66,8 @@ namespace ObservableEntitiesLightTracking
                     property.SetValue(_entity, _originalValues[property.Name]);
                 }
             }
+
+            _modifiedProperties.Clear();
         }
 
         internal void ApplyChanges()
@@ -64,6 +77,8 @@ namespace ObservableEntitiesLightTracking
                 if (_originalValues.ContainsKey(property.Name) && property.GetValue(_entity) != _originalValues[property.Name])
                     _originalValues[property.Name] = property.GetValue(_entity);
             }
+
+            _modifiedProperties.Clear();
         }
     }
 }

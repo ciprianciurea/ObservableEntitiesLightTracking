@@ -77,7 +77,7 @@ namespace ObservableEntitiesLightTracking
 
         public void ApplyChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
         {
-            _changeTracker.ApplyChanges();
+            _changeTracker.ApplyChanges<TEntity>();
         }
 
         public OEEntitySet<TEntity> Set<TEntity>() where TEntity : class, INotifyPropertyChanged
