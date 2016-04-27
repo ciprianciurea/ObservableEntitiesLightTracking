@@ -8,8 +8,6 @@ namespace ObservableEntitiesLightTracking
 {
     public class OEChangeTracker
     {
-        //TODO: implementDetectChanges when entity is not INotifyPropertyChanged and call DetectChanges for HasChanges, GetChanges.
-
         private ICollection<OEEntityEntry> _trackingEntityCollection;
 
         internal OEChangeTracker()
@@ -25,10 +23,7 @@ namespace ObservableEntitiesLightTracking
             var entityEntry = _trackingEntityCollection.FirstOrDefault(p => p.Entity == sender);
             if (entityEntry != null)
             {
-                if (entityEntry.State == OEEntityState.Unchanged)
-                    entityEntry.State = OEEntityState.Modified;
-
-                if (entityEntry.State == OEEntityState.Modified)
+                if (entityEntry.State == OEEntityState.Unchanged || entityEntry.State == OEEntityState.Modified)
                 {
                     entityEntry.AddModifiedProperty(e.PropertyName);
                 }
@@ -51,7 +46,7 @@ namespace ObservableEntitiesLightTracking
                 entityChangedHandler(this, new EntityEntryPropertyChangedEventArgs(entityEntry, propertyName));
         }
 
-        internal OEEntityEntry AttachEntry<TEntity>(TEntity entity, OEEntitySet entitySet) where TEntity : class, INotifyPropertyChanged
+        internal OEEntityEntry AttachEntry<TEntity>(TEntity entity, OEEntitySet entitySet) where TEntity : class
         {
             var entityEntry = _trackingEntityCollection.FirstOrDefault(p => p.Entity == entity);
 
@@ -59,26 +54,28 @@ namespace ObservableEntitiesLightTracking
             {
                 entityEntry = new OEEntityEntry(entity, entitySet) { State = OEEntityState.Unchanged };
                 _trackingEntityCollection.Add(entityEntry);
-                entity.PropertyChanged += entity_PropertyChanged;
+                if (typeof(INotifyPropertyChanged).IsAssignableFrom(entity.GetType()))
+                    ((INotifyPropertyChanged)entity).PropertyChanged += entity_PropertyChanged;
             }
 
             return entityEntry;
         }
 
-        internal OEEntityEntry DetachEntry<TEntity>(TEntity entity) where TEntity : class, INotifyPropertyChanged
+        internal OEEntityEntry DetachEntry<TEntity>(TEntity entity) where TEntity : class
         {
             var entityEntry = _trackingEntityCollection.FirstOrDefault(p => p.Entity == entity);
 
             if (entityEntry != null)
             {
-                entity.PropertyChanged -= entity_PropertyChanged;
+                if (typeof(INotifyPropertyChanged).IsAssignableFrom(entity.GetType()))
+                    ((INotifyPropertyChanged)entity).PropertyChanged -= entity_PropertyChanged;
                 _trackingEntityCollection.Remove(entityEntry);
             }
 
             return entityEntry;
         }
 
-        internal OEEntityEntry AddEntry<TEntity>(TEntity entity, OEEntitySet entitySet) where TEntity : class, INotifyPropertyChanged
+        internal OEEntityEntry AddEntry<TEntity>(TEntity entity, OEEntitySet entitySet) where TEntity : class
         {
             var entityEntry = _trackingEntityCollection.FirstOrDefault(p => p.Entity == entity);
 
@@ -86,7 +83,8 @@ namespace ObservableEntitiesLightTracking
             {
                 entityEntry = new OEEntityEntry(entity, entitySet) { State = OEEntityState.Added };
                 _trackingEntityCollection.Add(entityEntry);
-                entity.PropertyChanged += entity_PropertyChanged;
+                if (typeof(INotifyPropertyChanged).IsAssignableFrom(entity.GetType()))
+                    ((INotifyPropertyChanged)entity).PropertyChanged += entity_PropertyChanged;
 
                 OnEntityChanged(entityEntry);
             }
@@ -94,7 +92,7 @@ namespace ObservableEntitiesLightTracking
             return entityEntry;
         }
 
-        internal OEEntityEntry DeleteEntry<TEntity>(TEntity entity) where TEntity : class, INotifyPropertyChanged
+        internal OEEntityEntry DeleteEntry<TEntity>(TEntity entity) where TEntity : class
         {
             var entityEntry = _trackingEntityCollection.FirstOrDefault(p => p.Entity == entity);
 
@@ -114,29 +112,44 @@ namespace ObservableEntitiesLightTracking
 
         internal bool HasChanges()
         {
+            foreach (var entityEntry in _trackingEntityCollection.Where(p => !typeof(INotifyPropertyChanged).IsAssignableFrom(p.Entity.GetType())).ToList())
+                entityEntry.DetectChanges();
+
             var result = _trackingEntityCollection.Any(p => p.State != OEEntityState.Unchanged);
             return result;
         }
 
-        internal bool HasChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
+        internal bool HasChanges<TEntity>() where TEntity : class
         {
+            foreach (var entityEntry in _trackingEntityCollection.Where(p => !typeof(INotifyPropertyChanged).IsAssignableFrom(p.Entity.GetType())).ToList())
+                entityEntry.DetectChanges();
+
             var result = _trackingEntityCollection.Any(p => p.State != OEEntityState.Unchanged && p.Entity is TEntity);
             return result;
         }
 
         internal IEnumerable<OEEntityEntry> GetChanges()
         {
+            foreach (var entityEntry in _trackingEntityCollection.Where(p => !typeof(INotifyPropertyChanged).IsAssignableFrom(p.Entity.GetType())).ToList())
+                entityEntry.DetectChanges();
+
             var result = _trackingEntityCollection.Where(p => p.State != OEEntityState.Unchanged).ToArray();
             return result;
         }
 
-        internal IEnumerable<OEEntityEntry> GetChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
+        internal IEnumerable<OEEntityEntry> GetChanges<TEntity>() where TEntity : class
         {
+            if (!typeof(INotifyPropertyChanged).IsAssignableFrom(typeof(TEntity)))
+            {
+                foreach (var entityEntry in _trackingEntityCollection.Where(p => p.Entity is TEntity).ToList())
+                    entityEntry.DetectChanges();
+            }
+
             var result = _trackingEntityCollection.Where(p => p.State != OEEntityState.Unchanged && p.Entity is TEntity).ToArray();
             return result;
         }
 
-        internal IEnumerable<TEntity> GetAll<TEntity>() where TEntity : class, INotifyPropertyChanged
+        internal IEnumerable<TEntity> GetAll<TEntity>() where TEntity : class
         {
             var result = _trackingEntityCollection.Where(p => p.Entity is TEntity).Select(p => p.Entity as TEntity).ToArray();
             return result;
@@ -162,7 +175,7 @@ namespace ObservableEntitiesLightTracking
                 _trackingEntityCollection.Remove(item);
         }
 
-        internal void CancelChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
+        internal void CancelChanges<TEntity>() where TEntity : class
         {
             foreach (var item in _trackingEntityCollection.Where(p => p.State != OEEntityState.Unchanged && p.Entity is TEntity))
             {
@@ -189,7 +202,7 @@ namespace ObservableEntitiesLightTracking
                 _trackingEntityCollection.Remove(item);
         }
 
-        internal void ApplyChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
+        internal void ApplyChanges<TEntity>() where TEntity : class
         {
             foreach (var item in _trackingEntityCollection.Where(p => p.State != OEEntityState.Unchanged && p.Entity is TEntity))
             {
@@ -205,7 +218,7 @@ namespace ObservableEntitiesLightTracking
             return _trackingEntityCollection.ToArray();
         }
 
-        internal IEnumerable<OEEntityEntry> Entries<TEntity>() where TEntity : class, INotifyPropertyChanged
+        internal IEnumerable<OEEntityEntry> Entries<TEntity>() where TEntity : class
         {
             return _trackingEntityCollection.Where(p => p.Entity is TEntity);
         }

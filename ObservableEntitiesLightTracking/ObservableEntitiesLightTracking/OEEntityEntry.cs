@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ObservableEntitiesLightTracking.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -46,15 +47,25 @@ namespace ObservableEntitiesLightTracking
         {
             foreach (var property in _entity.GetType().GetProperties().Where(p => p.GetSetMethod() != null))
             {
-                _originalValues.Add(property.Name, property.GetValue(_entity));
+                var ignoreAttribute = property.GetCustomAttributes(typeof(IgnorePropertyAttribute), true).FirstOrDefault();
+                if (ignoreAttribute == null)
+                    _originalValues.Add(property.Name, property.GetValue(_entity));
             }
         }
 
         internal void AddModifiedProperty(string propertyName)
         {
+            if (!_originalValues.ContainsKey(propertyName))
+                return;
+
             var modifiedProperty = _modifiedProperties.FirstOrDefault(p => p.Name == propertyName);
             if (modifiedProperty == null)
+            {
                 _modifiedProperties.Add(new OEModifiedPropertyInfo(propertyName, _originalValues.FirstOrDefault(p => p.Key == propertyName).Value));
+            }
+
+            if (State == OEEntityState.Unchanged)
+                State = OEEntityState.Modified;
         }
 
         internal void CancelChanges()
@@ -79,6 +90,23 @@ namespace ObservableEntitiesLightTracking
             }
 
             _modifiedProperties.Clear();
+        }
+
+        internal void DetectChanges()
+        {
+            if (State == OEEntityState.Unchanged || State == OEEntityState.Modified)
+            {
+                foreach (var property in _entity.GetType().GetProperties().Where(p => p.GetSetMethod() != null))
+                {
+                    if (_originalValues.ContainsKey(property.Name) && !property.GetValue(_entity).Equals(_originalValues[property.Name]))
+                    {
+                        AddModifiedProperty(property.Name);
+
+                        if (State == OEEntityState.Unchanged)
+                            State = OEEntityState.Modified;
+                    }
+                }
+            }
         }
     }
 }

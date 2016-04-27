@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace ObservableEntitiesLightTracking
 {
-    public class OEEntitySet<TEntity> : OEEntitySet where TEntity : class, INotifyPropertyChanged
+    public class OEEntitySet<TEntity> : OEEntitySet where TEntity : class
     {
         OEContext _parentContext;
         IServiceProvider _validationServiceProvider;

@@ -65,7 +65,7 @@ namespace ObservableEntitiesLightTracking
             _changeTracker.CancelChanges();
         }
 
-        public void CancelChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
+        public void CancelChanges<TEntity>() where TEntity : class
         {
             _changeTracker.CancelChanges<TEntity>();
         }
@@ -75,12 +75,12 @@ namespace ObservableEntitiesLightTracking
             _changeTracker.ApplyChanges();
         }
 
-        public void ApplyChanges<TEntity>() where TEntity : class, INotifyPropertyChanged
+        public void ApplyChanges<TEntity>() where TEntity : class
         {
             _changeTracker.ApplyChanges<TEntity>();
         }
 
-        public OEEntitySet<TEntity> Set<TEntity>() where TEntity : class, INotifyPropertyChanged
+        public OEEntitySet<TEntity> Set<TEntity>() where TEntity : class
         {
             if (!_setsCollection.ContainsKey(typeof(TEntity)))
                 _setsCollection.Add(typeof(TEntity), new OEEntitySet<TEntity>(this));

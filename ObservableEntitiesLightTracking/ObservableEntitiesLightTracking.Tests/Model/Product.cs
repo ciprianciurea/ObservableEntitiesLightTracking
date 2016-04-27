@@ -1,4 +1,6 @@
-﻿namespace ObservableEntitiesLightTracking.Tests.Model
+﻿using ObservableEntitiesLightTracking.ComponentModel.DataAnnotations;
+
+namespace ObservableEntitiesLightTracking.Tests.Model
 {
     public class Product : ObservableObject
     {
@@ -21,6 +23,14 @@
         {
             get { return _unitPrice; }
             set { SetProperty(ref _unitPrice, value); }
+        }
+
+        private string _category;
+        [IgnoreProperty]
+        public string Category
+        {
+            get { return _category; }
+            set { SetProperty(ref _category, value); }
         }
     }
 }

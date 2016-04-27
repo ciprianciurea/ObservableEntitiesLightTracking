@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="KeyPropertyTests.cs" />
     <Compile Include="Model\Enums.cs" />
+    <Compile Include="Model\ProductPoco.cs" />
     <Compile Include="Model\ProductWithIWriteDataError.cs" />
     <Compile Include="Model\ObservableObject.cs" />
     <Compile Include="Model\ProductWithSingleKeyProperty.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="Model\ProductWithMixedValidation.cs" />
     <Compile Include="Model\ProductWithValidationAttributesNoSeverity.cs" />
     <Compile Include="Model\Product.cs" />
+    <Compile Include="OEContextPocoTests.cs" />
     <Compile Include="OEContextTests.cs" />
     <Compile Include="OEEntitySetTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
