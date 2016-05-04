@@ -20,6 +20,9 @@ namespace ObservableEntitiesLightTracking
 
         void entity_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (string.IsNullOrEmpty(e.PropertyName))
+                return;
+
             var entityEntry = _trackingEntityCollection.FirstOrDefault(p => p.Entity == sender);
             if (entityEntry != null)
             {
