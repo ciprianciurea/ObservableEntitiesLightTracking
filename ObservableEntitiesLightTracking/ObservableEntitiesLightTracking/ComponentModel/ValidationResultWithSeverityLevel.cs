@@ -55,7 +55,12 @@ namespace ObservableEntitiesLightTracking.ComponentModel
         }
 
         /// <summary>
-        /// Gets or sets the error severity Level
+        /// Gets or sets the error identifier value.
+        /// </summary>
+        public int ErrorId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the error severity Level.
         /// </summary>
         public object ErrorSeverity { get; set; }
 
