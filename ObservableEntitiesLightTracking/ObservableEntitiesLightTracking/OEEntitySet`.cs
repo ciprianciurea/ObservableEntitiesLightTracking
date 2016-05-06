@@ -70,6 +70,8 @@ namespace ObservableEntitiesLightTracking
         public OEEntityState EntityState(TEntity entity)
         {
             var entityEntry = _parentContext.ChangeTracker.Entries().FirstOrDefault(p => p.Entity == entity);
+            if (entityEntry == null)
+                throw new ArgumentNullException("entity");
             return entityEntry.State;
         }
 
