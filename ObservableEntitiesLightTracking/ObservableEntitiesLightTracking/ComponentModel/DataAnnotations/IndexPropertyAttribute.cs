@@ -7,14 +7,25 @@ using System.Linq;
 namespace ObservableEntitiesLightTracking.ComponentModel.DataAnnotations
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public sealed class KeyPropertyAttribute : ValidationAttribute
+    public sealed class IndexPropertyAttribute : ValidationAttribute
     {
         private const string DefaultErrorMessageFormatString = "Duplicate value {1} for field {0}.";
 
-        public KeyPropertyAttribute()
+        public IndexPropertyAttribute()
             : base(DefaultErrorMessageFormatString)
         {
         }
+
+        public IndexPropertyAttribute(string name)
+            : base(DefaultErrorMessageFormatString)
+        {
+            Name = name;
+        }
+
+        /// <summary>
+        /// The index name.
+        /// </summary>
+		public string Name { get; private set; }
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
@@ -24,15 +35,22 @@ namespace ObservableEntitiesLightTracking.ComponentModel.DataAnnotations
                 var contextItems = validationContext.Items[validationContextKey] as IEnumerable;
                 if (contextItems != null)
                 {
-                    List<KeyValuePair<string, object>> primaryKeys = new List<KeyValuePair<string, object>>();
+                    List<KeyValuePair<string, List<KeyValuePair<string, object>>>> indexProperties = new List<KeyValuePair<string, List<KeyValuePair<string, object>>>>();
 
                     foreach (var property in validationContext.ObjectInstance.GetType().GetProperties())
                     {
-                        var keyPropertyAttributes = property.GetCustomAttributes(this.GetType(), true);
-                        if (keyPropertyAttributes.Any())
+                        var indexName = this.Name ?? "IDX";
+                        var indexPropertyAttributes = property.GetCustomAttributes(this.GetType(), true).Cast<IndexPropertyAttribute>();
+                        if (indexPropertyAttributes.Any(p => p.Name.Equals(indexName)))
                         {
                             var propertyValue = property.GetValue(validationContext.ObjectInstance);
-                            primaryKeys.Add(new KeyValuePair<string, object>(property.Name, propertyValue));
+
+                            List<KeyValuePair<string, object>> currentIndexProperties = indexProperties.FirstOrDefault(p => p.Key == indexName).Value;
+                            if (currentIndexProperties == null)
+                                currentIndexProperties = new List<KeyValuePair<string, object>>();
+
+                            var kvp = new KeyValuePair<string, object>(property.Name, propertyValue);
+                            currentIndexProperties.Add(kvp);
                         }
                     }
 
@@ -43,13 +61,13 @@ namespace ObservableEntitiesLightTracking.ComponentModel.DataAnnotations
                             List<string> duplicateProperties = new List<string>();
                             bool isDuplicate = true;
 
-                            foreach (var primaryKey in primaryKeys)
+                            foreach (var indexProperty in indexProperties)
                             {
-                                var contextItemKeyProperty = contextItem.GetType().GetProperty(primaryKey.Key);
+                                var contextItemKeyProperty = contextItem.GetType().GetProperty(indexProperty.Key);
                                 if (contextItemKeyProperty != null)
                                 {
                                     var contextItemKeyValue = contextItemKeyProperty.GetValue(contextItem);
-                                    if ((contextItemKeyValue != null && contextItemKeyValue.Equals(primaryKey.Value)) || (contextItemKeyValue == null && primaryKey.Value == null))
+                                    if ((contextItemKeyValue != null && contextItemKeyValue.Equals(indexProperty.Value)) || (contextItemKeyValue == null && indexProperty.Value == null))
                                         isDuplicate = isDuplicate && true;
                                     else
                                         isDuplicate = isDuplicate && false;
@@ -58,13 +76,13 @@ namespace ObservableEntitiesLightTracking.ComponentModel.DataAnnotations
 
                             if (isDuplicate)
                             {
-                                foreach (var primaryKey in primaryKeys)
-                                    duplicateProperties.Add(primaryKey.Key);
+                                foreach (var indexProperty in indexProperties)
+                                    duplicateProperties.Add(indexProperty.Key);
                             }
 
                             if (duplicateProperties.Contains(validationContext.MemberName))
                             {
-                                return new ValidationResult(string.Format(ErrorMessageString, validationContext.DisplayName, primaryKeys.Single(p => p.Key == validationContext.MemberName).Value), new string[] { validationContext.MemberName });
+                                return new ValidationResult(string.Format(ErrorMessageString, validationContext.DisplayName, indexProperties.Single(p => p.Key == validationContext.MemberName).Value), new string[] { validationContext.MemberName });
                             }
                         }
                     }

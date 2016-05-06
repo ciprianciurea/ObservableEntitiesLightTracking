@@ -67,6 +67,12 @@ namespace ObservableEntitiesLightTracking
             return result;
         }
 
+        public OEEntityState EntityState(TEntity entity)
+        {
+            var entityEntry = _parentContext.ChangeTracker.Entries().FirstOrDefault(p => p.Entity == entity);
+            return entityEntry.State;
+        }
+
         public void SetValidationProvider(IServiceProvider validationServiceProvider)
         {
             _validationServiceProvider = validationServiceProvider;
