@@ -87,14 +87,17 @@ namespace ObservableEntitiesLightTracking
             bool supportsSeverityLevels = typeof(IValidatableObjectWithSeverityLevel).IsAssignableFrom(typeof(TEntity));
             bool supportsWriteErrorInfo = typeof(IWriteDataErrorInfo).IsAssignableFrom(typeof(TEntity));
 
-            var entityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified || p.State == OEEntityState.Unchanged);
+            var entityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified);
             var entities = entityEntries.Select(p => p.Entity).Cast<TEntity>();
+
+            var contextEntityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified || p.State == OEEntityState.Unchanged);
+            var contextEntities = entityEntries.Select(p => p.Entity).Cast<TEntity>();
 
             foreach (var entity in entities)
             {
                 bool entityValidationResult = true;
 
-                var validationContext = new ValidationContext(entity, _validationServiceProvider, new Dictionary<object, object>() { { typeof(KeyPropertyAttribute).Name, entities } });
+                var validationContext = new ValidationContext(entity, _validationServiceProvider, new Dictionary<object, object>() { { typeof(KeyPropertyAttribute).Name, contextEntities } });
 
                 ICollection<ValidationResult> simpleValidationResults = new Collection<ValidationResult>();
                 entityValidationResult = OEEntityValidator.TryValidateObject(entity, validationContext, simpleValidationResults, true);
@@ -124,10 +127,13 @@ namespace ObservableEntitiesLightTracking
             bool supportsSeverityLevels = typeof(IValidatableObjectWithSeverityLevel).IsAssignableFrom(typeof(TEntity));
             bool supportsWriteErrorInfo = typeof(IWriteDataErrorInfo).IsAssignableFrom(typeof(TEntity));
 
-            var entityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified || p.State == OEEntityState.Unchanged);
+            var entityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified);
             var entities = entityEntries.Select(p => p.Entity).Cast<TEntity>();
 
-            var validationContext = new ValidationContext(instance, _validationServiceProvider, new Dictionary<object, object>() { { typeof(KeyPropertyAttribute).Name, entities } }) { MemberName = propertyName };
+            var contextEntityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified || p.State == OEEntityState.Unchanged);
+            var contextEntities = entityEntries.Select(p => p.Entity).Cast<TEntity>();
+
+            var validationContext = new ValidationContext(instance, _validationServiceProvider, new Dictionary<object, object>() { { typeof(KeyPropertyAttribute).Name, contextEntities } }) { MemberName = propertyName };
             ICollection<ValidationResult> simpleValidationResults = new Collection<ValidationResult>();
 
             var property = instance.GetType().GetProperty(propertyName);
