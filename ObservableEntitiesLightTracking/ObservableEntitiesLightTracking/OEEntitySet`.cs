@@ -90,8 +90,12 @@ namespace ObservableEntitiesLightTracking
             var entityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified);
             var entities = entityEntries.Select(p => p.Entity).Cast<TEntity>();
 
-            var contextEntityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified || p.State == OEEntityState.Unchanged);
-            var contextEntities = entityEntries.Select(p => p.Entity).Cast<TEntity>();
+            var unchangedEntityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Unchanged);
+            var unchangedEntities = unchangedEntityEntries.Select(p => p.Entity).Cast<TEntity>();
+
+            var contextEntities = new List<TEntity>();
+            contextEntities.AddRange(entities);
+            contextEntities.AddRange(unchangedEntities);
 
             foreach (var entity in entities)
             {
@@ -130,8 +134,12 @@ namespace ObservableEntitiesLightTracking
             var entityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified);
             var entities = entityEntries.Select(p => p.Entity).Cast<TEntity>();
 
-            var contextEntityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified || p.State == OEEntityState.Unchanged);
-            var contextEntities = entityEntries.Select(p => p.Entity).Cast<TEntity>();
+            var unchangedEntityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Unchanged);
+            var unchangedEntities = unchangedEntityEntries.Select(p => p.Entity).Cast<TEntity>();
+
+            var contextEntities = new List<TEntity>();
+            contextEntities.AddRange(entities);
+            contextEntities.AddRange(unchangedEntities);
 
             var validationContext = new ValidationContext(instance, _validationServiceProvider, new Dictionary<object, object>() { { typeof(KeyPropertyAttribute).Name, contextEntities } }) { MemberName = propertyName };
             ICollection<ValidationResult> simpleValidationResults = new Collection<ValidationResult>();
