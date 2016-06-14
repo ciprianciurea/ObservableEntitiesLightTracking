@@ -216,13 +216,18 @@ namespace ObservableEntitiesLightTracking
 
         internal void ApplyChanges<TEntity>() where TEntity : class
         {
+            var itemsToDelete = new Collection<OEEntityEntry>();
             foreach (var item in _trackingEntityCollection.Where(p => p.State != OEEntityState.Unchanged && p.Entity is TEntity))
             {
                 item.ApplyChanges();
 
+                if (item.State == OEEntityState.Deleted)
+                    itemsToDelete.Add(item);
                 if (item.State != OEEntityState.Unchanged)
                     item.State = OEEntityState.Unchanged;
             }
+            foreach (var item in itemsToDelete)
+                _trackingEntityCollection.Remove(item);
         }
 
         internal IEnumerable<OEEntityEntry> Entries()
