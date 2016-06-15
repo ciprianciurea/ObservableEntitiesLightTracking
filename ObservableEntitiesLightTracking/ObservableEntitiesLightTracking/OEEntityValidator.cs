@@ -22,9 +22,11 @@ namespace ObservableEntitiesLightTracking
             var results = instance.ValidateWithSeverityLevels(validationContext);
             if (results != null)
             {
-                foreach (var validationResult in results.Where(p => p != ValidationResultWithSeverityLevel.Success))
+                var errorResults = results.Where(p => p != ValidationResultWithSeverityLevel.Success);
+
+                foreach (var validationResult in errorResults)
                     validationResults.Add(validationResult);
-                result = !results.Any(p => p.ErrorSeverity == null || failSafeSeverityLevels == null || !failSafeSeverityLevels.Contains(p.ErrorSeverity));
+                result = !errorResults.Any(p => p.ErrorSeverity == null || failSafeSeverityLevels == null || !failSafeSeverityLevels.Contains(p.ErrorSeverity));
             }
 
             return result;

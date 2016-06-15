@@ -127,6 +127,24 @@ namespace ObservableEntitiesLightTracking.Tests
         }
 
         [TestMethod]
+        public void Should_validate_when_custom_validation_is_met_severity_support()
+        {
+            var context = new OEContext();
+            var productSet = context.Set<ProductWithCustomValidationSeveritySupport>();
+            var product = new ProductWithCustomValidationSeveritySupport()
+            {
+                Id = 1,
+                Name = "Valid Product",
+                UnitPrice = 1
+            };
+            productSet.Add(product);
+
+            var validationResults = new List<ValidationResultWithSeverityLevel>();
+            var result = productSet.Validate(validationResults);
+            Assert.AreEqual(true, result);
+        }
+
+        [TestMethod]
         public void Should_not_validate_and_return_errors_when_custom_validation_is_not_met_severity_support()
         {
             var context = new OEContext();
