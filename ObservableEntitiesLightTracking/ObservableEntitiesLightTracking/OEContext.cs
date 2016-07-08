@@ -100,7 +100,8 @@ namespace ObservableEntitiesLightTracking
             bool result = true;
             foreach (var set in _setsCollection)
             {
-                result = result && set.Value.Validate(validationResults);
+                var setResult = set.Value.Validate(validationResults);
+                result = result && setResult;
             }
             return result;
         }
