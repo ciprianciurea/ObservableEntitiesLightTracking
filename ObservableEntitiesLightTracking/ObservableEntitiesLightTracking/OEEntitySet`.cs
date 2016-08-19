@@ -100,6 +100,7 @@ namespace ObservableEntitiesLightTracking
             foreach (var entity in entities)
             {
                 bool entityValidationResult = true;
+                bool entityValidationWithSeverityLevelResult = true;
 
                 var validationContext = new ValidationContext(entity, _validationServiceProvider, new Dictionary<object, object>() { { typeof(KeyPropertyAttribute).Name, contextEntities } });
 
@@ -113,7 +114,7 @@ namespace ObservableEntitiesLightTracking
 
                 // validates with severity level if the entity implements IValidatableObjectWithSeverityLevel
                 if (supportsSeverityLevels)
-                    entityValidationResult = entityValidationResult && OEEntityValidator.TryValidateObjectWithSeverityLevel((IValidatableObjectWithSeverityLevel)entity, validationContext, entityValidationResults, true, _parentContext.Configuration.ValidationSafeSeverityLevels);
+                    entityValidationWithSeverityLevelResult = OEEntityValidator.TryValidateObjectWithSeverityLevel((IValidatableObjectWithSeverityLevel)entity, validationContext, entityValidationResults, true, _parentContext.Configuration.ValidationSafeSeverityLevels);
 
                 foreach (var validationResult in entityValidationResults)
                     validationResults.Add(validationResult);
@@ -122,7 +123,7 @@ namespace ObservableEntitiesLightTracking
                 if (supportsWriteErrorInfo)
                     ((IWriteDataErrorInfo)entity).AddValidationErrors(entityValidationResults);
 
-                result = result && entityValidationResult;
+                result = entityValidationResult && entityValidationWithSeverityLevelResult;
             }
             return result;
         }
