@@ -113,7 +113,7 @@ namespace ObservableEntitiesLightTracking
 
                 // validates with severity level if the entity implements IValidatableObjectWithSeverityLevel
                 if (supportsSeverityLevels)
-                    entityValidationResult = OEEntityValidator.TryValidateObjectWithSeverityLevel((IValidatableObjectWithSeverityLevel)entity, validationContext, entityValidationResults, true, _parentContext.Configuration.ValidationSafeSeverityLevels);
+                    entityValidationResult = entityValidationResult && OEEntityValidator.TryValidateObjectWithSeverityLevel((IValidatableObjectWithSeverityLevel)entity, validationContext, entityValidationResults, true, _parentContext.Configuration.ValidationSafeSeverityLevels);
 
                 foreach (var validationResult in entityValidationResults)
                     validationResults.Add(validationResult);

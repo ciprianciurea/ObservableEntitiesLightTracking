@@ -55,7 +55,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="KeyPropertyTests.cs" />
+    <Compile Include="Model\BaseItem.cs" />
     <Compile Include="Model\Enums.cs" />
+    <Compile Include="Model\InheritedItem.cs" />
     <Compile Include="Model\ProductPoco.cs" />
     <Compile Include="Model\ProductWithIWriteDataError.cs" />
     <Compile Include="Model\ObservableObject.cs" />

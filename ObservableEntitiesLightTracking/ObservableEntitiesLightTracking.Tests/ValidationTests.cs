@@ -314,6 +314,39 @@ namespace ObservableEntitiesLightTracking.Tests
             Assert.AreEqual("UnitPrice", validationResults[1].MemberNames.ElementAt(0));
             Assert.AreEqual(ValidationSeverityLevel.Warning, validationResults[1].ErrorSeverity);
         }
+
+        [TestMethod]
+        public void Should_not_validate_inherited_classes_with_errors_when_the_entity_set_is_registered_against_the_base_type()
+        {
+            var context = new OEContext();
+            var productSet = context.Set<BaseItem>();
+            var product = new InheritedItem()
+            {
+                Id = -1,
+                Name = null,
+                UnitPrice = -1,
+                Description = null
+            };
+            productSet.Add(product);
+
+            var validationResults = new List<ValidationResultWithSeverityLevel>();
+            var result = productSet.Validate(validationResults);
+            Assert.AreEqual(false, result);
+            Assert.AreEqual(2, validationResults.Count());
+            Assert.AreSame(product, validationResults[0].Entity);
+            Assert.AreEqual("Name", validationResults[0].MemberNames.ElementAt(0));
+            Assert.AreSame(product, validationResults[1].Entity);
+            Assert.AreEqual("Description", validationResults[1].MemberNames.ElementAt(0));
+
+            validationResults = new List<ValidationResultWithSeverityLevel>();
+            result = context.Validate(validationResults);
+            Assert.AreEqual(false, result);
+            Assert.AreEqual(2, validationResults.Count());
+            Assert.AreSame(product, validationResults[0].Entity);
+            Assert.AreEqual("Name", validationResults[0].MemberNames.ElementAt(0));
+            Assert.AreSame(product, validationResults[1].Entity);
+            Assert.AreEqual("Description", validationResults[1].MemberNames.ElementAt(0));
+        }
         #endregion Validation tests
     }
 }
