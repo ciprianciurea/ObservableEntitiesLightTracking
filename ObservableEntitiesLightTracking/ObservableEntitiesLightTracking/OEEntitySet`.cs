@@ -123,7 +123,7 @@ namespace ObservableEntitiesLightTracking
                 if (supportsWriteErrorInfo)
                     ((IWriteDataErrorInfo)entity).AddValidationErrors(entityValidationResults);
 
-                result = entityValidationResult && entityValidationWithSeverityLevelResult;
+                result = result && entityValidationResult && entityValidationWithSeverityLevelResult;
             }
             return result;
         }
