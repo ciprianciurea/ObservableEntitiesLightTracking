@@ -106,18 +106,21 @@ namespace ObservableEntitiesLightTracking
                 ICollection<ValidationResult> simpleValidationResults = new Collection<ValidationResult>();
                 entityValidationResult = OEEntityValidator.TryValidateObject(entity, validationContext, simpleValidationResults, true);
 
+                ICollection<ValidationResultWithSeverityLevel> entityValidationResults = new Collection<ValidationResultWithSeverityLevel>();
+
                 foreach (var validationResult in simpleValidationResults)
-                    validationResults.Add(new ValidationResultWithSeverityLevel(validationResult.ErrorMessage, validationResult.MemberNames, null, entity));
+                    entityValidationResults.Add(new ValidationResultWithSeverityLevel(validationResult.ErrorMessage, validationResult.MemberNames, null, entity));
 
                 // validates with severity level if the entity implements IValidatableObjectWithSeverityLevel
                 if (supportsSeverityLevels)
-                {
-                    entityValidationResult = OEEntityValidator.TryValidateObjectWithSeverityLevel((IValidatableObjectWithSeverityLevel)entity, validationContext, validationResults, true, _parentContext.Configuration.ValidationSafeSeverityLevels);
-                }
+                    entityValidationResult = OEEntityValidator.TryValidateObjectWithSeverityLevel((IValidatableObjectWithSeverityLevel)entity, validationContext, entityValidationResults, true, _parentContext.Configuration.ValidationSafeSeverityLevels);
+
+                foreach (var validationResult in entityValidationResults)
+                    validationResults.Add(validationResult);
 
                 // pass the validation results to the validated entity for display if implements IWriteDataErrorInfo
                 if (supportsWriteErrorInfo)
-                    ((IWriteDataErrorInfo)entity).AddValidationErrors(validationResults);
+                    ((IWriteDataErrorInfo)entity).AddValidationErrors(entityValidationResults);
 
                 result = result && entityValidationResult;
             }
