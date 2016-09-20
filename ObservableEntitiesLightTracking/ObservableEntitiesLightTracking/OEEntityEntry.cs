@@ -94,7 +94,7 @@ namespace ObservableEntitiesLightTracking
 
         internal void DetectChanges()
         {
-            if (State == OEEntityState.Unchanged || State == OEEntityState.Modified)
+            if (EntitySet.AlwaysTrackModifiedProperties || State == OEEntityState.Unchanged || State == OEEntityState.Modified)
             {
                 foreach (var property in _entity.GetType().GetProperties().Where(p => p.GetSetMethod() != null))
                 {

@@ -54,6 +54,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AlwaysTrackModifiedPropertiesTests.cs" />
     <Compile Include="KeyPropertyTests.cs" />
     <Compile Include="Model\BaseItem.cs" />
     <Compile Include="Model\Enums.cs" />

@@ -26,7 +26,7 @@ namespace ObservableEntitiesLightTracking
             var entityEntry = _trackingEntityCollection.FirstOrDefault(p => p.Entity == sender);
             if (entityEntry != null)
             {
-                if (entityEntry.State == OEEntityState.Unchanged || entityEntry.State == OEEntityState.Modified)
+                if (entityEntry.EntitySet.AlwaysTrackModifiedProperties || entityEntry.State == OEEntityState.Unchanged || entityEntry.State == OEEntityState.Modified)
                 {
                     entityEntry.AddModifiedProperty(e.PropertyName);
                 }

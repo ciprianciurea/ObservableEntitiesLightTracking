@@ -3,13 +3,12 @@ using ObservableEntitiesLightTracking.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace ObservableEntitiesLightTracking
 {
-    public class OEEntitySet<TEntity> : OEEntitySet where TEntity : class
+  public class OEEntitySet<TEntity> : OEEntitySet where TEntity : class
     {
         OEContext _parentContext;
         IServiceProvider _validationServiceProvider;
@@ -18,6 +17,7 @@ namespace ObservableEntitiesLightTracking
         {
             _parentContext = parentContext;
             ValidateOnPropertyChanged = false;
+            AlwaysTrackModifiedProperties = false;
         }
 
         public void Attach(TEntity entity)
