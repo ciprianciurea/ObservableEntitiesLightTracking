@@ -113,6 +113,12 @@ namespace ObservableEntitiesLightTracking
             return entityEntry;
         }
 
+        internal bool ContainsEntry<TEntity>(TEntity entity) where TEntity : class
+        {
+            var entityEntry = _trackingEntityCollection.FirstOrDefault(p => p.Entity == entity);
+            return entityEntry != null;
+        }
+
         internal bool HasChanges()
         {
             foreach (var entityEntry in _trackingEntityCollection.Where(p => !typeof(INotifyPropertyChanged).IsAssignableFrom(p.Entity.GetType())).ToList())

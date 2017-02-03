@@ -50,6 +50,16 @@ namespace ObservableEntitiesLightTracking
             }
         }
 
+        public bool Contains(TEntity entity)
+        {
+            bool result = false;
+            if (entity != null)
+            {
+                result = _parentContext.ChangeTracker.ContainsEntry<TEntity>(entity);
+            }
+            return result;
+        }
+
         public bool HasChanges()
         {
             return _parentContext.ChangeTracker.HasChanges<TEntity>();
