@@ -18,6 +18,7 @@ namespace ObservableEntitiesLightTracking
             _parentContext = parentContext;
             ValidateOnPropertyChanged = false;
             AlwaysTrackModifiedProperties = false;
+            ForceValidationOnUnchanged = false;
         }
 
         public void Attach(TEntity entity)
@@ -97,10 +98,10 @@ namespace ObservableEntitiesLightTracking
             bool supportsSeverityLevels = typeof(IValidatableObjectWithSeverityLevel).IsAssignableFrom(typeof(TEntity));
             bool supportsWriteErrorInfo = typeof(IWriteDataErrorInfo).IsAssignableFrom(typeof(TEntity));
 
-            var entityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified);
+            var entityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified || (ForceValidationOnUnchanged && p.State == OEEntityState.Unchanged));
             var entities = entityEntries.Select(p => p.Entity).Cast<TEntity>();
 
-            var unchangedEntityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Unchanged);
+            var unchangedEntityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => !ForceValidationOnUnchanged && p.State == OEEntityState.Unchanged);
             var unchangedEntities = unchangedEntityEntries.Select(p => p.Entity).Cast<TEntity>();
 
             var contextEntities = new List<TEntity>();
@@ -145,10 +146,10 @@ namespace ObservableEntitiesLightTracking
             bool supportsSeverityLevels = typeof(IValidatableObjectWithSeverityLevel).IsAssignableFrom(typeof(TEntity));
             bool supportsWriteErrorInfo = typeof(IWriteDataErrorInfo).IsAssignableFrom(typeof(TEntity));
 
-            var entityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified);
+            var entityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Added || p.State == OEEntityState.Modified || (ForceValidationOnUnchanged && p.State == OEEntityState.Unchanged));
             var entities = entityEntries.Select(p => p.Entity).Cast<TEntity>();
 
-            var unchangedEntityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => p.State == OEEntityState.Unchanged);
+            var unchangedEntityEntries = _parentContext.ChangeTracker.Entries<TEntity>().Where(p => !ForceValidationOnUnchanged && p.State == OEEntityState.Unchanged);
             var unchangedEntities = unchangedEntityEntries.Select(p => p.Entity).Cast<TEntity>();
 
             var contextEntities = new List<TEntity>();

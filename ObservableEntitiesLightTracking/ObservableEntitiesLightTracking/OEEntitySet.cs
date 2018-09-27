@@ -7,6 +7,7 @@ namespace ObservableEntitiesLightTracking
     {
         public bool ValidateOnPropertyChanged { get; set; }
         public bool AlwaysTrackModifiedProperties { get; set; }
+        public bool ForceValidationOnUnchanged { get; set; }
 
         public abstract bool Validate(ICollection<ValidationResultWithSeverityLevel> validationResults);
         public abstract bool ValidateProperty(object instance, string propertyName, ICollection<ValidationResultWithSeverityLevel> validationResults);
