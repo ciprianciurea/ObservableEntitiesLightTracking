@@ -57,9 +57,13 @@
     <Compile Include="AlwaysTrackModifiedPropertiesTests.cs" />
     <Compile Include="KeyPropertyTests.cs" />
     <Compile Include="Model\BaseItem.cs" />
+    <Compile Include="Model\CustomServiceProvider.cs" />
     <Compile Include="Model\Enums.cs" />
     <Compile Include="Model\InheritedItem.cs" />
+    <Compile Include="Model\IProductValidationService.cs" />
     <Compile Include="Model\ProductPoco.cs" />
+    <Compile Include="Model\ProductValidationService.cs" />
+    <Compile Include="Model\ProductWithCustomValidationProviderNoSeverity.cs" />
     <Compile Include="Model\ProductWithIWriteDataError.cs" />
     <Compile Include="Model\ObservableObject.cs" />
     <Compile Include="Model\ProductWithSingleKeyProperty.cs" />
@@ -72,6 +76,7 @@
     <Compile Include="OEContextTests.cs" />
     <Compile Include="OEEntitySetTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ValidationServiceProviderTests.cs" />
     <Compile Include="ValidationTests.cs" />
     <Compile Include="WriteDataErrorTests.cs" />
   </ItemGroup>
