@@ -18,7 +18,7 @@ namespace ObservableEntitiesLightTracking
         internal event EventHandler<EntityEntryEventArgs> EntityChanged;
         internal event EventHandler<EntityEntryPropertyChangedEventArgs> EntityPropertyChanged;
 
-        void entity_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        void Entity_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (string.IsNullOrEmpty(e.PropertyName))
                 return;
@@ -58,7 +58,7 @@ namespace ObservableEntitiesLightTracking
                 entityEntry = new OEEntityEntry(entity, entitySet) { State = OEEntityState.Unchanged };
                 _trackingEntityCollection.Add(entityEntry);
                 if (typeof(INotifyPropertyChanged).IsAssignableFrom(entity.GetType()))
-                    ((INotifyPropertyChanged)entity).PropertyChanged += entity_PropertyChanged;
+                    ((INotifyPropertyChanged)entity).PropertyChanged += Entity_PropertyChanged;
             }
 
             return entityEntry;
@@ -71,7 +71,7 @@ namespace ObservableEntitiesLightTracking
             if (entityEntry != null)
             {
                 if (typeof(INotifyPropertyChanged).IsAssignableFrom(entity.GetType()))
-                    ((INotifyPropertyChanged)entity).PropertyChanged -= entity_PropertyChanged;
+                    ((INotifyPropertyChanged)entity).PropertyChanged -= Entity_PropertyChanged;
                 _trackingEntityCollection.Remove(entityEntry);
             }
 
@@ -87,7 +87,7 @@ namespace ObservableEntitiesLightTracking
                 entityEntry = new OEEntityEntry(entity, entitySet) { State = OEEntityState.Added };
                 _trackingEntityCollection.Add(entityEntry);
                 if (typeof(INotifyPropertyChanged).IsAssignableFrom(entity.GetType()))
-                    ((INotifyPropertyChanged)entity).PropertyChanged += entity_PropertyChanged;
+                    ((INotifyPropertyChanged)entity).PropertyChanged += Entity_PropertyChanged;
 
                 OnEntityChanged(entityEntry);
             }
@@ -176,7 +176,7 @@ namespace ObservableEntitiesLightTracking
                 else if (item.State == OEEntityState.Added)
                 {
                     if (typeof(INotifyPropertyChanged).IsAssignableFrom(item.Entity.GetType()))
-                        ((INotifyPropertyChanged)item.Entity).PropertyChanged -= entity_PropertyChanged;
+                        ((INotifyPropertyChanged)item.Entity).PropertyChanged -= Entity_PropertyChanged;
                     itemsToDelete.Add(item);
                 }
             }
@@ -196,7 +196,7 @@ namespace ObservableEntitiesLightTracking
                 else if (item.State == OEEntityState.Added)
                 {
                     if (typeof(INotifyPropertyChanged).IsAssignableFrom(item.Entity.GetType()))
-                        ((INotifyPropertyChanged)item.Entity).PropertyChanged -= entity_PropertyChanged;
+                        ((INotifyPropertyChanged)item.Entity).PropertyChanged -= Entity_PropertyChanged;
                     itemsToDelete.Add(item);
                 }
             }

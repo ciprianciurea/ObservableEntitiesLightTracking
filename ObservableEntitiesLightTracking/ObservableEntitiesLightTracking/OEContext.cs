@@ -10,18 +10,18 @@ namespace ObservableEntitiesLightTracking
     {
         private Dictionary<Type, OEEntitySet> _setsCollection;
         private OEChangeTracker _changeTracker;
-        private OEContextConfiguration _configuration;
+        private readonly OEContextConfiguration _configuration;
 
         public OEContext()
         {
             _setsCollection = new Dictionary<Type, OEEntitySet>();
             _changeTracker = new OEChangeTracker();
             _configuration = new OEContextConfiguration();
-            _changeTracker.EntityChanged += changeTracker_EntityChanged;
-            _changeTracker.EntityPropertyChanged += changeTracker_EntityPropertyChanged;
+            _changeTracker.EntityChanged += ChangeTracker_EntityChanged;
+            _changeTracker.EntityPropertyChanged += ChangeTracker_EntityPropertyChanged;
         }
 
-        void changeTracker_EntityPropertyChanged(object sender, EntityEntryPropertyChangedEventArgs e)
+        void ChangeTracker_EntityPropertyChanged(object sender, EntityEntryPropertyChangedEventArgs e)
         {
             #region Trigger entity set validation if ValidateOnPropertyChanged is set to true
 
@@ -31,14 +31,14 @@ namespace ObservableEntitiesLightTracking
             if (entitySet.ValidateOnPropertyChanged)
                 entitySet.ValidateProperty(e.EntityEntry.Entity, e.PropertyName, validationResults);
 
-            #endregion Trigger entity set validation if ValidateOnPropertyChanged is set to true
+      #endregion Trigger entity set validation if ValidateOnPropertyChanged is set to true
 
-            if (EntityChanged != null) EntityChanged(this, e);
+            EntityChanged?.Invoke(this, e);
         }
 
-        void changeTracker_EntityChanged(object sender, EntityEntryEventArgs e)
+        void ChangeTracker_EntityChanged(object sender, EntityEntryEventArgs e)
         {
-            if (EntityChanged != null) EntityChanged(this, e);
+            EntityChanged?.Invoke(this, e);
         }
 
         /// <summary>

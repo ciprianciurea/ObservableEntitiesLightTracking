@@ -45,7 +45,7 @@ namespace ObservableEntitiesLightTracking
 
         private void InitializeOriginalValues()
         {
-            foreach (var property in _entity.GetType().GetProperties().Where(p => p.GetSetMethod() != null))
+            foreach (System.Reflection.PropertyInfo property in _entity.GetType().GetProperties().Where(p => p.GetSetMethod() != null))
             {
                 var ignoreAttribute = property.GetCustomAttributes(typeof(IgnorePropertyAttribute), true).FirstOrDefault();
                 if (ignoreAttribute == null)

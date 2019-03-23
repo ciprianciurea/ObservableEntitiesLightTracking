@@ -32,7 +32,7 @@ namespace ObservableEntitiesLightTracking.ComponentModel.DataAnnotations
             var validationContextKey = this.GetType().Name;
             if (validationContext.Items != null && validationContext.Items.ContainsKey(validationContextKey))
             {
-                var contextItems = validationContext.Items[validationContextKey] as IEnumerable;
+                var contextItems = (validationContext.Items[validationContextKey] is IEnumerable) ? validationContext.Items[validationContextKey] as IEnumerable : null;
                 if (contextItems != null)
                 {
                     List<KeyValuePair<string, List<KeyValuePair<string, object>>>> indexProperties = new List<KeyValuePair<string, List<KeyValuePair<string, object>>>>();
