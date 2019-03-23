@@ -2,6 +2,18 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>CipKey.snk</AssemblyOriginatorKeyFile>
+    <Version>2.0.0</Version>
+    <Authors>Ciprian Ciurea</Authors>
+    <Description>Provides change tracking and validation support to your classes. It can enhance the validation with custom severity levels. Supports writting validation errors back to your entity. Supports key validation against the entity context.</Description>
+    <PackageProjectUrl>https://github.com/ciprianciurea/ObservableEntitiesLightTracking</PackageProjectUrl>
+    <DelaySign>false</DelaySign>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Product>Observable Entities Tracking and Validation</Product>
+    <Company />
+    <PackageReleaseNotes>Library targets the .net standard 2.0 framework.</PackageReleaseNotes>
+    <PackageLicenseUrl>https://github.com/ciprianciurea/ObservableEntitiesLightTracking/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
   <ItemGroup>
