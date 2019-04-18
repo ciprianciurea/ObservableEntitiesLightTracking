@@ -5,7 +5,7 @@ namespace ObservableEntitiesLightTracking
 {
     public class OEContextConfiguration
     {
-        IServiceProvider _validationServiceProvider;
+        private IServiceProvider _validationServiceProvider;
         /// <summary>
         /// A service provider to be passed to the validation context to be used by the validation methods.
         /// </summary>
@@ -15,7 +15,7 @@ namespace ObservableEntitiesLightTracking
             set { _validationServiceProvider = value; }
         }
 
-        ICollection<object> _validationSafeSeverityLevels;
+        private ICollection<object> _validationSafeSeverityLevels;
         /// <summary>
         /// An enumeration of severity levels that should not fail the validation. 
         /// </summary>
@@ -24,5 +24,7 @@ namespace ObservableEntitiesLightTracking
             get { return _validationSafeSeverityLevels; }
             set { _validationSafeSeverityLevels = value; }
         }
+
+        public bool EnableLowerCamelCaseOnMemberNames { get; set; }
     }
 }

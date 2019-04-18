@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace ObservableEntitiesLightTracking
 {
-  public class OEEntitySet<TEntity> : OEEntitySet where TEntity : class
+    public class OEEntitySet<TEntity> : OEEntitySet where TEntity : class
     {
         OEContext _parentContext;
         IServiceProvider _validationServiceProvider;
@@ -128,7 +128,19 @@ namespace ObservableEntitiesLightTracking
                     entityValidationWithSeverityLevelResult = OEEntityValidator.TryValidateObjectWithSeverityLevel((IValidatableObjectWithSeverityLevel)entity, validationContext, entityValidationResults, true, _parentContext.Configuration.ValidationSafeSeverityLevels);
 
                 foreach (var validationResult in entityValidationResults)
-                    validationResults.Add(validationResult);
+                {
+                    if (_parentContext.Configuration.EnableLowerCamelCaseOnMemberNames && validationResult.MemberNames != null)
+                    {
+                        var lowerCamelCaseMemberNames = validationResult.MemberNames.Select(p =>
+                        {
+                            return Char.ToLowerInvariant(p[0]) + (p.Length > 1 ? p.Substring(1) : string.Empty);
+                        });
+
+                        validationResults.Add(new ValidationResultWithSeverityLevel(validationResult.ErrorMessage, lowerCamelCaseMemberNames, validationResult.ErrorSeverity, validationResult.Entity));
+                    }
+                    else
+                        validationResults.Add(validationResult);
+                }
 
                 // pass the validation results to the validated entity for display if implements IWriteDataErrorInfo
                 if (supportsWriteErrorInfo)
@@ -167,7 +179,19 @@ namespace ObservableEntitiesLightTracking
             }
 
             foreach (var validationResult in simpleValidationResults)
-                validationResults.Add(new ValidationResultWithSeverityLevel(validationResult.ErrorMessage, validationResult.MemberNames, null, instance));
+            {
+                if (_parentContext.Configuration.EnableLowerCamelCaseOnMemberNames && validationResult.MemberNames != null)
+                {
+                    var lowerCamelCaseMemberNames = validationResult.MemberNames.Select(p =>
+                    {
+                        return Char.ToLowerInvariant(p[0]) + (p.Length > 1 ? p.Substring(1) : string.Empty);
+                    });
+
+                    validationResults.Add(new ValidationResultWithSeverityLevel(validationResult.ErrorMessage, lowerCamelCaseMemberNames, null, instance));
+                }
+                else
+                    validationResults.Add(new ValidationResultWithSeverityLevel(validationResult.ErrorMessage, validationResult.MemberNames, null, instance));
+            }
 
             // pass the validation results to the validated entity for display if implements IWriteDataErrorInfo
             if (supportsWriteErrorInfo)

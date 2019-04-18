@@ -347,6 +347,44 @@ namespace ObservableEntitiesLightTracking.Tests
             Assert.AreSame(product, validationResults[1].Entity);
             Assert.AreEqual("Description", validationResults[1].MemberNames.ElementAt(0));
         }
+
+        [TestMethod]
+        public void Should_not_validate_and_return_errors_with_lower_camel_case_fiel_names_when_attributes_conditions_are_not_met_no_severity_support()
+        {
+            var context = new OEContext();
+            var productSet = context.Set<ProductWithValidationAttributesNoSeverity>();
+            context.Configuration.EnableLowerCamelCaseOnMemberNames = true;
+            var product = new ProductWithValidationAttributesNoSeverity()
+            {
+                Id = -1,
+                Name = null,
+                UnitPrice = -1
+            };
+            productSet.Add(product);
+
+            var validationResults = new List<ValidationResultWithSeverityLevel>();
+            var result = productSet.Validate(validationResults);
+            Assert.AreEqual(false, result);
+            Assert.AreEqual(3, validationResults.Count());
+            Assert.AreSame(product, validationResults[0].Entity);
+            Assert.AreEqual("id", validationResults[0].MemberNames.ElementAt(0));
+            Assert.AreSame(product, validationResults[1].Entity);
+            Assert.AreEqual("name", validationResults[1].MemberNames.ElementAt(0));
+            Assert.AreSame(product, validationResults[2].Entity);
+            Assert.AreEqual("unitPrice", validationResults[2].MemberNames.ElementAt(0));
+
+            validationResults = new List<ValidationResultWithSeverityLevel>();
+            result = context.Validate(validationResults);
+            Assert.AreEqual(false, result);
+            Assert.AreEqual(3, validationResults.Count());
+            Assert.AreSame(product, validationResults[0].Entity);
+            Assert.AreEqual("id", validationResults[0].MemberNames.ElementAt(0));
+            Assert.AreSame(product, validationResults[1].Entity);
+            Assert.AreEqual("name", validationResults[1].MemberNames.ElementAt(0));
+            Assert.AreSame(product, validationResults[2].Entity);
+            Assert.AreEqual("unitPrice", validationResults[2].MemberNames.ElementAt(0));
+        }
+
         #endregion Validation tests
     }
 }

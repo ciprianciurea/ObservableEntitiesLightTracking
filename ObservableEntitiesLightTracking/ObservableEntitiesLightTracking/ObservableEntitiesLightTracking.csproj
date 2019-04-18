@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>CipKey.snk</AssemblyOriginatorKeyFile>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <Authors>Ciprian Ciurea</Authors>
     <Description>Provides change tracking and validation support to your classes. It can enhance the validation with custom severity levels. Supports writting validation errors back to your entity. Supports key validation against the entity context.</Description>
     <PackageProjectUrl>https://github.com/ciprianciurea/ObservableEntitiesLightTracking</PackageProjectUrl>
@@ -12,7 +12,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Product>Observable Entities Tracking and Validation</Product>
     <Company />
-    <PackageReleaseNotes>Library targets the .net standard 2.0 framework.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added EnableLowerCamelCaseOnMemberNames to the context configuration to cope with the EnableLowerCamelCase in AspNetCore OData Builder. This helps return lower camel case member names in the validation results to javascript clients.</PackageReleaseNotes>
     <PackageLicenseUrl>https://github.com/ciprianciurea/ObservableEntitiesLightTracking/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
